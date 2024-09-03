@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardHeader,
   CardDescription,
+  CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,14 +12,30 @@ import {
   Table,
   TableBody,
   TableCaption,
-  TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
+  TableCell,
+  TableFooter
 } from "@/components/ui/table";
+import { useState } from "react";
 
-const Category = () => {
+export default function Budget() {
+  const monthName = [
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
+  ];
+
   let i = 1;
   const invoices = [
     {
@@ -65,56 +81,76 @@ const Category = () => {
       paymentMethod: "Credit Card",
     },
   ];
+  const date = new Date();
+  const month = date.getMonth();
+  const monthNow = month < 10 ? `0${month}` : `${month}`;
+  const monthNext = month + 1 < 10 ? `0${month + 1}` : `${month + 1}`;
+  const today = `${date.getFullYear()}-${monthNow}-25`;
+  const next = `${date.getFullYear()}-${monthNext}-24`;
+
+  const [search, setSearch] = useState("");
+  const [dateFrom, setDateFrom] = useState(today);
+  const [dateTo, setDateTo] = useState(next);
   return (
     <Layout>
       <div className="tw-flex tw-flex-col tw-m-10">
         <div className="tw-flex tw-flex-row tw-mt-4 tw-mb-4">
-          <Input className="tw-mr-2" placeholder="Cari kategori ..." />
-          <select className="tw-w-[20%] tw-mr-2 tw-appearance-none tw-bg-background tw-border tw-border-input tw-rounded-md tw-py-2 tw-px-3 tw-text-sm tw-font-medium tw-text-foreground focus:tw-outline-none focus:tw-ring-1 sm:tw-w-[50%] md:tw-w-[35%] focus:tw-ring-ring focus:tw-border-primary">
-              <option>Expenses</option>
-              <option>Income</option>
-          </select>
-          <Button variant={"default"}>Cari</Button>
+          <Input
+            className="tw-mr-2"
+            placeholder="Cari berdasarkan deskripsi"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Input
+            type="date"
+            className="tw-mr-2"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+          />
+          <Input
+            type="date"
+            className="tw-mr-2"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+          ></Input>
+          <Button variant={"outline"}>Cari</Button>
         </div>
-
         <div className="tw-flex tw-flex-col tw-mt-4">
           <Card>
             <CardHeader>
-              <CardTitle>Category</CardTitle>
-              <CardDescription>
-                <div className="tw-mt-4">
-                  <a
-                    href="/category/add"
-                    className="tw-bg-blue-500 tw-text-white tw-text-sm tw-font-semibold tw-py-1 tw-px-2 tw-font-medium tw-rounded hover:tw-bg-blue-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
-                  >
-                    Tambah Kategori
-                  </a>
-                </div>
-              </CardDescription>
+              <CardTitle>
+                Budget Bulan {monthName[date.getMonth()]}
+                <CardDescription>
+                  <div className="tw-mt-4">
+                    <a
+                      href="/budget/add"
+                      className="tw-bg-blue-500 tw-text-white tw-text-sm tw-font-semibold tw-py-1 tw-px-2 tw-font-medium tw-rounded hover:tw-bg-blue-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
+                    >
+                      Buat budget baru
+                    </a>
+                  </div>
+                </CardDescription>
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
-                <TableCaption>List of categories.</TableCaption>
+                <TableCaption>List of Budget.</TableCaption>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[100px]">Name</TableHead>
-                    <TableHead>code</TableHead>
-                    <TableHead>type</TableHead>
-                    <TableHead>qty</TableHead>
-                    <TableHead className="text-right">
-                      Amount this month
-                    </TableHead>
-                  </TableRow>
+                  <TableHead className="w-[100px]">Name</TableHead>
+                  <TableHead>catgory</TableHead>
+                  <TableHead>Deskripsi</TableHead>
+                  <TableHead className="text-right">
+                    Amount this month
+                  </TableHead>
                 </TableHeader>
                 <TableBody>
-                  {invoices.map((invoice) => (
+                {invoices.map((invoice) => (
                     <TableRow key={invoice.invoice}>
                       <TableCell className="font-medium">
                         {invoice.invoice}
                       </TableCell>
                       <TableCell>{invoice.paymentStatus}</TableCell>
                       <TableCell>{invoice.paymentMethod}</TableCell>
-                      <TableCell>{i++}</TableCell>
                       <TableCell className="text-right">
                         {invoice.totalAmount}
                       </TableCell>
@@ -123,18 +159,10 @@ const Category = () => {
                 </TableBody>
                 <TableFooter>
                   <TableRow>
-                    <TableCell colSpan={4}>Total Income</TableCell>
+                    <TableCell colSpan={3}>Total Income</TableCell>
                     <TableCell className="text-right">$2,500.00</TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell colSpan={4}>Total expenses</TableCell>
-                    <TableCell className="text-right">$2,500.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell colSpan={4}>Total amount</TableCell>
-                    <TableCell className="text-right">$2,500.00</TableCell>
-                  </TableRow>
-                </TableFooter>
+                 </TableFooter>
               </Table>
             </CardContent>
           </Card>
@@ -142,6 +170,4 @@ const Category = () => {
       </div>
     </Layout>
   );
-};
-
-export default Category;
+}

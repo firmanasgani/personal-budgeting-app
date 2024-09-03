@@ -7,6 +7,9 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import Category from "./pages/Category/Category";
 import FormCategory from "./pages/Forms/formCategory";
 import Register from "./pages/Register/Register";
+import Budget from "./pages/Budget/budget";
+import Transaction from "./pages/Transaction/Transaction";
+import FormBudget from "./pages/Forms/formBudget";
 
 export default function App() {
   const isLogin = useIsLogin();
@@ -23,7 +26,11 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/category" element={<Category />} />
         <Route path="/category/add" element={<FormCategory />} />
+        <Route path="/budget" element={<Budget />} />
+        <Route path="/budget/add" element={<FormBudget />} />
+        <Route path="/transaction" element={<Transaction />} />
         <Route path="/register" element={<Register />}></Route>
+
       </Routes>
     </BrowserRouter>
   );

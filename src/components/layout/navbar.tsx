@@ -35,12 +35,12 @@ const Navbar: React.FC = () => {
             </a>
           </li>
           <li>
-            <a href="#" className="tw-block tw-px-4 tw-py-2 md:tw-py-0 hover:tw-bg-blue-700 md:hover:tw-bg-transparent">
+            <a href="/budget" className="tw-block tw-px-4 tw-py-2 md:tw-py-0 hover:tw-bg-blue-700 md:hover:tw-bg-transparent">
               Budget
             </a>
           </li>
           <li>
-            <a href="#" className="tw-block tw-px-4 tw-py-2 md:tw-py-0 hover:tw-bg-blue-700 md:hover:tw-bg-transparent">
+            <a href="/transaction" className="tw-block tw-px-4 tw-py-2 md:tw-py-0 hover:tw-bg-blue-700 md:hover:tw-bg-transparent">
               Transaction
             </a>
           </li>
