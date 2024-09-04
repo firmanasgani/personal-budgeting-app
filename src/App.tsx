@@ -10,6 +10,7 @@ import Register from "./pages/Register/Register";
 import Budget from "./pages/Budget/budget";
 import Transaction from "./pages/Transaction/Transaction";
 import FormBudget from "./pages/Forms/formBudget";
+import FormTransaction from "./pages/Forms/formTransaction";
 
 export default function App() {
   const isLogin = useIsLogin();
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/budget" element={<Budget />} />
         <Route path="/budget/add" element={<FormBudget />} />
         <Route path="/transaction" element={<Transaction />} />
+        <Route path="/transaction/add" element={<FormTransaction />} />
         <Route path="/register" element={<Register />}></Route>
 
       </Routes>

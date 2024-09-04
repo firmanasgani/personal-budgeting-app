@@ -26,7 +26,7 @@ const Navbar: React.FC = () => {
         {/* Navbar items: always visible on desktop, toggle on mobile */}
         <ul
           className={`tw-flex tw-flex-row  md:tw-flex-row md:tw-items-center md:tw-space-x-6 tw-absolute tw-bg-blue-600 tw-w-full md:tw-w-auto tw-transition-all tw-justify-end tw-duration-300 tw-ease-in-out md:tw-static ${
-            isMobileMenuOpen ? 'tw-top-16 tw-left-0' : 'tw-top-[-400px] tw-left-0'
+            isMobileMenuOpen ? 'tw-top-16 tw-left-0 tw-flex-wrap tw-gap-2' : 'tw-top-[-400px] tw-left-0'
           } md:tw-top-0 md:tw-left-auto md:tw-bg-transparent`}
         >
           <li>

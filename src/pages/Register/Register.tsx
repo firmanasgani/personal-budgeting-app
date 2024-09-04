@@ -71,7 +71,7 @@ export default function Register() {
                 <Input type="password" id="confirm_password" placeholder="********" value={form.confirmPassword} onChange={(e) => setForm({...form, confirmPassword: e.target.value})} />
               </div>
 
-              <Button type="submit">Sign in</Button>
+              <Button type="submit">Sign up</Button>
               <p className="tw-text-sm tw-font-light tw-text-gray-500 dark:tw-text-gray-400">
                 Already have an account?
                 <a

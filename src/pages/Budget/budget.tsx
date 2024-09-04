@@ -94,7 +94,7 @@ export default function Budget() {
   return (
     <Layout>
       <div className="tw-flex tw-flex-col tw-m-10">
-        <div className="tw-flex tw-flex-row tw-mt-4 tw-mb-4">
+        <div className="tw-flex tw-flex-row tw-mt-4 tw-mb-4 tw-gap-2 tw-flex-wrap">
           <Input
             className="tw-mr-2"
             placeholder="Cari berdasarkan deskripsi"

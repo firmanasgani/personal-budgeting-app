@@ -1,31 +1,30 @@
 import Layout from "@/components/layout/layout";
 import { useState } from "react";
 
-export default function FormBudget() {
+export default function FormTransaction() {
   
   const date = new Date()
-  const month = date.getMonth()
+  const month = date.getMonth() + 1
   const monthNow = month < 10 ? `0${month}` : `${month}`
-  const monthNext = month + 1 ? `0${month+1}` : `${month+1}`
-  const today = `${date.getFullYear()}-${monthNow}-25`
-  const next = `${date.getFullYear()}-${monthNext}-24`
+  const dateNow = date.getDate()
+  const dateNow2 = dateNow < 10 ? `0${dateNow}` : `${dateNow}` 
 
+  const today = `${date.getFullYear()}-${monthNow}-${dateNow2}`
   const [form, setForm] = useState({
     category: '',
     description: '',
     amount: 0,
-    startDate: today,
-    endDate: next
+    dateTransaction: today
   });
 
-  const handleBudget = () => {
+  const handleTransaction = () => {
   
   };
 
   return (
     <Layout>
       <div className="tw-flex tw-flex-col tw-m-10 tw-h-svh">
-        <h1 className="tw-mt-2 tw-font-bold">Buat Budget Baru</h1>
+        <h1 className="tw-mt-2 tw-font-bold">Tambah Transaksi baru</h1>
         <form className="tw-mt-5">
           
           <div className="tw-flex tw-flex-col tw-mt-2">
@@ -62,31 +61,22 @@ export default function FormBudget() {
             />
           </div>
           <div className="tw-flex tw-flex-col tw-mt-2">
-            <label htmlFor="startDate">Tanggal Mulai</label>
+            <label htmlFor="startDate">Tanggal Transaksi</label>
             <input
               type="date"
               name="startDate"
-              value={form.startDate}
-              onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+              value={form.dateTransaction}
+              onChange={(e) => setForm({ ...form, dateTransaction: e.target.value })}
               className="tw-border tw-rounded tw-p-2"
             />
           </div>
-          <div className="tw-flex tw-flex-col tw-mt-2">
-            <label htmlFor="endDate">Tanggal selesai</label>
-            <input
-              type="date"
-              name="code"
-              value={form.endDate}
-              onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-              className="tw-border tw-rounded tw-p-2"
-            />
-          </div>
+        
           <div className="tw-flex tw-flex-col tw-mt-6">
             <button
-              onClick={handleBudget}
+              onClick={handleTransaction}
               className="tw-bg-blue-500 tw-text-white tw-font-semibold tw-py-2 tw-px-4 tw-rounded hover:tw-bg-blue-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
             >
-              Tambah Budget
+              Buat pengeluaran baru
             </button>
           </div>
         </form>
