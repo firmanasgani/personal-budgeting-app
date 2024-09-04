@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { ApiUrl } from "@/lib/utils";
+import axios from "axios";
 
 
 export default function Login() {
@@ -10,6 +12,8 @@ export default function Login() {
         username: '',
         password: '',
     })
+    
+    const url = ApiUrl()
 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -30,25 +34,19 @@ export default function Login() {
             return;
         }
         try {
-
-            const res = await fetch("/api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(form),
+            const formData = new FormData()
+            formData.append('username', form.username)
+            formData.append('password', form.password)
+            const response = await axios.post(`${url}/login`, formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data', // Set the content type to multipart/form-data
+              },
             });
-
-            if (res.ok) {
-                window.location.href = "/";
-            } else {
-                const json = await res.json();
-                if(json && json.message) {
-                    alert(json.message);
-                } else {
-                    alert("Something went wrong");
-                }
-            }
+      
+            // Handle successful login
+            localStorage.setItem('accessToken', response.data.access_token)
+            localStorage.setItem('refreshToken', response.data.refresh_token)
+            localStorage.setItem('userData',  JSON.stringify(response.data.users))
         } catch (error) {
             console.error(error);
             alert("An unexpected error occurred");
