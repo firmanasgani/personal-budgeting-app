@@ -96,12 +96,12 @@ const Category = () => {
               <Table>
                 <TableCaption>List of categories.</TableCaption>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[100px]">Name</TableHead>
+                  <TableRow className="tw-bg-red-100">
+                    <TableHead className="tw-w-[100px]">Name</TableHead>
                     <TableHead>code</TableHead>
                     <TableHead>type</TableHead>
                     <TableHead>qty</TableHead>
-                    <TableHead className="text-right">
+                    <TableHead className="tw-text-right">
                       Amount this month
                     </TableHead>
                   </TableRow>
@@ -109,30 +109,30 @@ const Category = () => {
                 <TableBody>
                   {invoices.map((invoice) => (
                     <TableRow key={invoice.invoice}>
-                      <TableCell className="font-medium">
+                      <TableCell className="tw-font-medium">
                         {invoice.invoice}
                       </TableCell>
                       <TableCell>{invoice.paymentStatus}</TableCell>
                       <TableCell>{invoice.paymentMethod}</TableCell>
                       <TableCell>{i++}</TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="tw-text-right">
                         {invoice.totalAmount}
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
                 <TableFooter>
-                  <TableRow>
+                  <TableRow className="tw-bg-gray-600 tw-text-white">
                     <TableCell colSpan={4}>Total Income</TableCell>
-                    <TableCell className="text-right">$2,500.00</TableCell>
+                    <TableCell className="tw-text-right">$2,500.00</TableCell>
                   </TableRow>
-                  <TableRow>
+                  <TableRow className="tw-bg-gray-400">
                     <TableCell colSpan={4}>Total expenses</TableCell>
-                    <TableCell className="text-right">$2,500.00</TableCell>
+                    <TableCell className="tw-text-right">$2,500.00</TableCell>
                   </TableRow>
-                  <TableRow>
+                  <TableRow className="tw-bg-gray-200">
                     <TableCell colSpan={4}>Total amount</TableCell>
-                    <TableCell className="text-right">$2,500.00</TableCell>
+                    <TableCell className="tw-text-right">$2,500.00</TableCell>
                   </TableRow>
                 </TableFooter>
               </Table>

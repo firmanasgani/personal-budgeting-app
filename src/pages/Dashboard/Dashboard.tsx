@@ -1,30 +1,39 @@
 import Layout from "@/components/layout/layout";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Dashboard() {
-  const API_URL = import.meta.env.VITE_URL_API
-  console.log(API_URL)
+  const data_card = ['Card 1', 'Card 2', 'Card 3']
+
+  const API_URL = import.meta.env.VITE_URL_API;
+  console.log(API_URL);
   return (
     <Layout>
       <main className="tw-flex tw-flex-col tw-m-10">
         Dasboard works!
-        <div className="tw-flex tw-flex-row tw-flex-wrap tw-gap-4 tw-mt-4">
-          <Card className="tw-w-[240px]">
-            <CardHeader>
-              <CardTitle>
-                Card title 1
-              </CardTitle>
-
-            </CardHeader>
-          </Card>
-          <Card className="tw-w-[240px]">
-            <CardHeader>
-              <CardTitle>
-                Card title 1
-              </CardTitle>
-
-            </CardHeader>
-          </Card>
+        <div className="tw-flex tw-flex-row tw-flex-wrap tw-gap-4 tw-mt-4 sm:tw-gap-2">
+          {
+            data_card.map((data) => (
+              <Card className="tw-w-[500px]">
+              <CardHeader>
+                <CardTitle>{data}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="tw-flex tw-flex-row tw-justify-between tw-flex-wrap tw-gap-2 tw-w-full">
+                  <div className="tw-bg-green-600 tw-text-white tw-p-2 tw- tw-rounded-lg hover:tw-bg-green-200 hover:tw-text-black tw-cursor-pointer">
+                    Content 1
+                  </div>
+                  <div className="tw-bg-red-600 tw-text-white tw-p-2 tw- tw-rounded-lg hover:tw-bg-red-200 hover:tw-text-black tw-cursor-pointer">
+                    Content 2
+                  </div>
+                  <div className="tw-bg-blue-600 tw-text-white tw-p-2 tw- tw-rounded-lg hover:tw-bg-blue-200 hover:tw-text-black tw-cursor-pointer">
+                    Content 3
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            ))
+          }
+       
         </div>
       </main>
     </Layout>

@@ -30,7 +30,7 @@ const Navbar: React.FC = () => {
           } md:tw-top-0 md:tw-left-auto md:tw-bg-transparent`}
         >
           <li>
-            <a href="/dashboard" className="tw-block tw-px-4 tw-py-2 md:tw-py-0 hover:tw-bg-blue-700 md:hover:tw-bg-transparent">
+            <a href="/dashboard" className="tw-block tw-px-4 tw-py-2 md:tw-py-0 hover:tw-bg-blue-600 md:hover:tw-bg-transparent">
               Dashboard
             </a>
           </li>

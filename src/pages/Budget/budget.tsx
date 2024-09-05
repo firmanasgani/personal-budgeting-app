@@ -36,7 +36,6 @@ export default function Budget() {
     "Desember",
   ];
 
-  let i = 1;
   const invoices = [
     {
       invoice: "INV001",
@@ -96,24 +95,24 @@ export default function Budget() {
       <div className="tw-flex tw-flex-col tw-m-10">
         <div className="tw-flex tw-flex-row tw-mt-4 tw-mb-4 tw-gap-2 tw-flex-wrap">
           <Input
-            className="tw-mr-2"
+            className="tw-mr-2 tw-max-w-sm"
             placeholder="Cari berdasarkan deskripsi"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
           <Input
             type="date"
-            className="tw-mr-2"
+            className="tw-mr-2 tw-max-w-sm"
             value={dateFrom}
             onChange={(e) => setDateFrom(e.target.value)}
           />
           <Input
             type="date"
-            className="tw-mr-2"
+            className="tw-mr-2 tw-max-w-sm"
             value={dateTo}
             onChange={(e) => setDateTo(e.target.value)}
           ></Input>
-          <Button variant={"outline"}>Cari</Button>
+          <Button variant={"default"} className="tw-max-w-sm">Cari</Button>
         </div>
         <div className="tw-flex tw-flex-col tw-mt-4">
           <Card>
@@ -133,34 +132,34 @@ export default function Budget() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Table>
+              <Table className="rounded">
                 <TableCaption>List of Budget.</TableCaption>
-                <TableHeader>
-                  <TableHead className="w-[100px]">Name</TableHead>
+                <TableHeader className="tw-bg-blue-300">
+                  <TableHead className="tw-w-[100px]  tw-text-black">Name</TableHead>
                   <TableHead>catgory</TableHead>
                   <TableHead>Deskripsi</TableHead>
-                  <TableHead className="text-right">
+                  <TableHead className="tw-text-right">
                     Amount this month
                   </TableHead>
                 </TableHeader>
                 <TableBody>
                 {invoices.map((invoice) => (
                     <TableRow key={invoice.invoice}>
-                      <TableCell className="font-medium">
+                      <TableCell className="tw-font-medium">
                         {invoice.invoice}
                       </TableCell>
                       <TableCell>{invoice.paymentStatus}</TableCell>
                       <TableCell>{invoice.paymentMethod}</TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="tw-text-right">
                         {invoice.totalAmount}
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
-                <TableFooter>
+                <TableFooter className="tw-bg-gray-200">
                   <TableRow>
                     <TableCell colSpan={3}>Total Income</TableCell>
-                    <TableCell className="text-right">$2,500.00</TableCell>
+                    <TableCell className="tw-text-right">$2,500.00</TableCell>
                   </TableRow>
                  </TableFooter>
               </Table>
