@@ -18,9 +18,43 @@ import {
   TableCell,
   TableFooter
 } from "@/components/ui/table";
-import { useState } from "react";
+import { ApiUrl } from "@/lib/utils";
+import axios from "axios";
+import { useEffect, useState } from "react";
+function formatDate(dateString: string) {
+  // Parse the date string
+  const date = new Date(dateString);
+
+  // Get the parts of the date
+  const dayOfWeek = date.toLocaleString('en-US', { weekday: 'short' }); // Sat
+  const day = date.getDate(); // 24
+  const month = date.toLocaleString('en-US', { month: 'short' }).toLowerCase(); // aug
+  const year = date.getFullYear(); // 2024
+
+  // Combine into the desired format
+  return `${dayOfWeek}, ${day} ${month} ${year}`;
+}
+
+function formatNumberToRupiah(number: number) {
+  // Use Intl.NumberFormat with Indonesian locale and currency options
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0, // No decimal places
+    maximumFractionDigits: 0, // No decimal places
+  }).format(number);
+}
 
 export default function Budget() {
+  interface IBudget {
+    id: string;
+    description: string;
+    categoryid: string;
+    amount: number;
+    start_date: string;
+    end_date: string;
+  }
+
   const monthName = [
     "Januari",
     "Februari",
@@ -36,50 +70,26 @@ export default function Budget() {
     "Desember",
   ];
 
-  const invoices = [
-    {
-      invoice: "INV001",
-      paymentStatus: "Paid",
-      totalAmount: "$250.00",
-      paymentMethod: "Credit Card",
-    },
-    {
-      invoice: "INV002",
-      paymentStatus: "Pending",
-      totalAmount: "$150.00",
-      paymentMethod: "PayPal",
-    },
-    {
-      invoice: "INV003",
-      paymentStatus: "Unpaid",
-      totalAmount: "$350.00",
-      paymentMethod: "Bank Transfer",
-    },
-    {
-      invoice: "INV004",
-      paymentStatus: "Paid",
-      totalAmount: "$450.00",
-      paymentMethod: "Credit Card",
-    },
-    {
-      invoice: "INV005",
-      paymentStatus: "Paid",
-      totalAmount: "$550.00",
-      paymentMethod: "PayPal",
-    },
-    {
-      invoice: "INV006",
-      paymentStatus: "Pending",
-      totalAmount: "$200.00",
-      paymentMethod: "Bank Transfer",
-    },
-    {
-      invoice: "INV007",
-      paymentStatus: "Unpaid",
-      totalAmount: "$300.00",
-      paymentMethod: "Credit Card",
-    },
-  ];
+  const [budget, setBudget] = useState<IBudget[]>([])
+  const urlApi = ApiUrl()
+  const fetchBudget = async() => {
+    const token = localStorage.getItem('authToken')
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+
+    const response = await axios.get(`${urlApi}/budget`, config)
+    setBudget(response.data.budget)
+  
+
+  }
+
+  useEffect(() => {
+    fetchBudget()
+  }, [])
+
   const date = new Date();
   const month = date.getMonth();
   const monthNow = month < 10 ? `0${month}` : `${month}`;
@@ -138,27 +148,31 @@ export default function Budget() {
                   <TableHead className="tw-w-[100px]  tw-text-black">Name</TableHead>
                   <TableHead>catgory</TableHead>
                   <TableHead>Deskripsi</TableHead>
+                  <TableHead>Start Date</TableHead>
+                  <TableHead>End date</TableHead>
                   <TableHead className="tw-text-right">
                     Amount this month
                   </TableHead>
                 </TableHeader>
                 <TableBody>
-                {invoices.map((invoice) => (
-                    <TableRow key={invoice.invoice}>
+                {budget.map((b) => (
+                    <TableRow key={b.id}>
                       <TableCell className="tw-font-medium">
-                        {invoice.invoice}
+                        {b.description}
                       </TableCell>
-                      <TableCell>{invoice.paymentStatus}</TableCell>
-                      <TableCell>{invoice.paymentMethod}</TableCell>
+                      <TableCell>{b.categoryid}</TableCell>
+                      <TableCell>{b.description}</TableCell>
+                      <TableCell>{formatDate(b.start_date)}</TableCell>
+                      <TableCell>{formatDate(b.end_date)}</TableCell>
                       <TableCell className="tw-text-right">
-                        {invoice.totalAmount}
+                        {formatNumberToRupiah(b.amount)}
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
                 <TableFooter className="tw-bg-gray-200">
                   <TableRow>
-                    <TableCell colSpan={3}>Total Income</TableCell>
+                    <TableCell colSpan={5}>Total Income</TableCell>
                     <TableCell className="tw-text-right">$2,500.00</TableCell>
                   </TableRow>
                  </TableFooter>

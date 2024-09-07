@@ -4,57 +4,67 @@ import { Input } from "../../components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ApiUrl } from "@/lib/utils";
 import axios from "axios";
-
+import { Navigate, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/authContext";
 
 export default function Login() {
-    const {toast} = useToast()
-    const [form, setForm] = useState({
-        username: '',
-        password: '',
-    })
-    
-    const url = ApiUrl()
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    username: "",
+    password: "",
+  });
+  const navigate = useNavigate();
+  const { login } = useAuth()
 
+  const url = ApiUrl();
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if(!form || !form.username) {
-            toast({
-                title: "Uh oh! Something went wrong.",
-                description: "There was a problem with your request.",
-            })
-            return;
-        }
+  const token = localStorage.getItem('authToken')
+  if(token != null) {
+    return <Navigate to="/dashboard" />
+  }
 
-        if(!form.password) {
-            toast({
-                title: "Password is required",
-                description: "Please enter your password.",
-            })
-            return;
-        }
-        try {
-            const formData = new FormData()
-            formData.append('username', form.username)
-            formData.append('password', form.password)
-            const response = await axios.post(`${url}/login`, formData, {
-              headers: {
-                'Content-Type': 'multipart/form-data', // Set the content type to multipart/form-data
-              },
-            });
-      
-            // Handle successful login
-            localStorage.setItem('accessToken', response.data.access_token)
-            localStorage.setItem('refreshToken', response.data.refresh_token)
-            localStorage.setItem('userData',  JSON.stringify(response.data.users))
-        } catch (error) {
-            console.error(error);
-            alert("An unexpected error occurred");
-        }
-    };
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    setLoading(true);
+    e.preventDefault();
+   
+    try {
+      const formData = new FormData();
+      if (!form || !form.username) {
+        toast({
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem with your request.",
+        });
+        return;
+      }
+  
+      if (!form.password) {
+        toast({
+          title: "Password is required",
+          description: "Please enter your password.",
+        });
+        return;
+      }
+      formData.append("username", form.username);
+      formData.append("password", form.password);
+      const response = await axios.post(`${url}/login`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Set the content type to multipart/form-data
+        },
+      });
 
-
-
+      // Handle successful login
+     
+      localStorage.setItem("refreshToken", response.data.refresh_token);
+      localStorage.setItem("userData", JSON.stringify(response.data.users));
+      login(response.data.access_token)
+    } catch (error) {
+      console.error(error);
+      alert("An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section className="tw-bg-gray-50 dark:tw-bg-gray-900">
@@ -70,7 +80,10 @@ export default function Login() {
             <h1 className="tw-text-xl tw-font-bold tw-leading-tight tw-tracking-tight tw-text-gray-900 md:tw-text-2xl dark:tw-text-white">
               Sign in to your account
             </h1>
-            <form className="tw-space-y-4 md:tw-space-y-6" onSubmit={handleSubmit}>
+            <form
+              className="tw-space-y-4 md:tw-space-y-6"
+              onSubmit={handleSubmit}
+            >
               <div>
                 <label
                   htmlFor="username"
@@ -78,7 +91,15 @@ export default function Login() {
                 >
                   Username
                 </label>
-                <Input type="text" id="username" placeholder="jhon.doe" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} />
+                <Input
+                  type="text"
+                  id="username"
+                  placeholder="jhon.doe"
+                  value={form.username}
+                  onChange={(e) =>
+                    setForm({ ...form, username: e.target.value })
+                  }
+                />
               </div>
               <div>
                 <label
@@ -87,11 +108,45 @@ export default function Login() {
                 >
                   Password
                 </label>
-                <Input type="password" id="password" placeholder="********" value={form.password} onChange={(e) => setForm({...form, password: e.target.value})}/>
+                <Input
+                  type="password"
+                  id="password"
+                  placeholder="********"
+                  value={form.password}
+                  onChange={(e) =>
+                    setForm({ ...form, password: e.target.value })
+                  }
+                />
               </div>
-            
-              <Button type="submit">
-                Sign in
+
+              <Button type="submit" disabled={loading}>
+                {loading ? (
+                  <>
+                    <svg
+                      className="w-5 h-5 mr-2 text-white animate-spin"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 11-8 8z"
+                      ></path>
+                    </svg>
+                    Loading...
+                  </>
+                ) : (
+                  "Login"
+                )}
               </Button>
               <p className="tw-text-sm tw-font-light tw-text-gray-500 dark:tw-text-gray-400">
                 Don’t have an account yet?{" "}

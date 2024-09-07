@@ -1,7 +1,7 @@
 // src/components/Navbar.tsx
 
+import { useAuth } from '@/hooks/authContext';
 import React, { useState } from 'react';
-
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -9,6 +9,12 @@ const Navbar: React.FC = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const handleLogout = () => {
+    localStorage.clear()
+    window.location.reload()
+  }
+
+ 
   return (
     <header className="tw-bg-blue-600 tw-text-white">
       <nav className="tw-container tw-mx-auto tw-flex tw-items-center  tw-justify-between tw-p-4">
@@ -50,9 +56,9 @@ const Navbar: React.FC = () => {
             </a>
           </li>
           <li>
-            <a href="/login" className="tw-block tw-px-4 tw-py-2 md:tw-py-0 hover:tw-bg-blue-700 md:hover:tw-bg-transparent">
+            <button onClick={handleLogout} className="tw-block tw-px-4 tw-py-2 md:tw-py-0 hover:tw-bg-blue-700 md:hover:tw-bg-transparent">
               Logout
-            </a>
+            </button>
           </li>
         </ul>
       </nav>
