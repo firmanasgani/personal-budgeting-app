@@ -18,3 +18,48 @@ export const formatNumberToRupiah = (number: number) => {
     maximumFractionDigits: 0, // No decimal places
   }).format(number);
 }
+
+export const UtilToday = () => {
+  const date = new Date();
+  const month = date.getMonth();
+  const monthNow = month < 10 ? `0${month}` : `${month}`;
+  const today = `${date.getFullYear()}-${monthNow}-25`;
+  return today;
+}
+
+export const UtilNextMonth = () => {
+  const date = new Date();
+  const month = date.getMonth() + 1;
+  const monthNext = month < 10 ? `0${month}` : `${month}`;
+  const next = `${date.getFullYear()}-${monthNext}-24`;
+  return next;
+}
+
+export function formatDate(dateString: string) {
+  // Parse the date string
+  const date = new Date(dateString);
+
+  // Get the parts of the date
+  const dayOfWeek = date.toLocaleString('en-US', { weekday: 'short' }); // Sat
+  const day = date.getDate(); // 24
+  const month = date.toLocaleString('en-US', { month: 'short' }).toLowerCase(); // aug
+  const year = date.getFullYear(); // 2024
+
+  // Combine into the desired format
+  return `${dayOfWeek}, ${day} ${month} ${year}`;
+}
+
+export const UtilMonthName = [
+  "Januari",
+  "Februari",
+  "Maret",
+  "April",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Agustus",
+  "September",
+  "Oktober",
+  "November",
+  "Desember",
+];

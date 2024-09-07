@@ -18,32 +18,12 @@ import {
   TableCell,
   TableFooter
 } from "@/components/ui/table";
-import { ApiUrl } from "@/lib/utils";
+import { ApiUrl, formatDate, formatNumberToRupiah, UtilMonthName, UtilNextMonth, UtilToday } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react";
-function formatDate(dateString: string) {
-  // Parse the date string
-  const date = new Date(dateString);
 
-  // Get the parts of the date
-  const dayOfWeek = date.toLocaleString('en-US', { weekday: 'short' }); // Sat
-  const day = date.getDate(); // 24
-  const month = date.toLocaleString('en-US', { month: 'short' }).toLowerCase(); // aug
-  const year = date.getFullYear(); // 2024
 
-  // Combine into the desired format
-  return `${dayOfWeek}, ${day} ${month} ${year}`;
-}
 
-function formatNumberToRupiah(number: number) {
-  // Use Intl.NumberFormat with Indonesian locale and currency options
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 0, // No decimal places
-    maximumFractionDigits: 0, // No decimal places
-  }).format(number);
-}
 
 export default function Budget() {
   interface IBudget {
@@ -55,20 +35,6 @@ export default function Budget() {
     end_date: string;
   }
 
-  const monthName = [
-    "Januari",
-    "Februari",
-    "Maret",
-    "April",
-    "Mei",
-    "Juni",
-    "Juli",
-    "Agustus",
-    "September",
-    "Oktober",
-    "November",
-    "Desember",
-  ];
 
   const [budget, setBudget] = useState<IBudget[]>([])
   const urlApi = ApiUrl()
@@ -91,15 +57,10 @@ export default function Budget() {
   }, [])
 
   const date = new Date();
-  const month = date.getMonth();
-  const monthNow = month < 10 ? `0${month}` : `${month}`;
-  const monthNext = month + 1 < 10 ? `0${month + 1}` : `${month + 1}`;
-  const today = `${date.getFullYear()}-${monthNow}-25`;
-  const next = `${date.getFullYear()}-${monthNext}-24`;
 
   const [search, setSearch] = useState("");
-  const [dateFrom, setDateFrom] = useState(today);
-  const [dateTo, setDateTo] = useState(next);
+  const [dateFrom, setDateFrom] = useState(UtilToday);
+  const [dateTo, setDateTo] = useState(UtilNextMonth);
   return (
     <Layout>
       <div className="tw-flex tw-flex-col tw-m-10">
@@ -128,9 +89,8 @@ export default function Budget() {
           <Card>
             <CardHeader>
               <CardTitle>
-                Budget Bulan {monthName[date.getMonth()]}
-                <CardDescription>
-                  <div className="tw-mt-4">
+                Budget Bulan {UtilMonthName[date.getMonth()]}
+                <div className="tw-mt-4">
                     <a
                       href="/budget/add"
                       className="tw-bg-blue-500 tw-text-white tw-text-sm tw-font-semibold tw-py-1 tw-px-2 tw-font-medium tw-rounded hover:tw-bg-blue-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
@@ -138,14 +98,14 @@ export default function Budget() {
                       Buat budget baru
                     </a>
                   </div>
-                </CardDescription>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <Table className="rounded">
                 <TableCaption>List of Budget.</TableCaption>
                 <TableHeader className="tw-bg-blue-300">
-                  <TableHead className="tw-w-[100px]  tw-text-black">Name</TableHead>
+                 <TableRow>
+                 <TableHead className="tw-w-[100px]  tw-text-black">Name</TableHead>
                   <TableHead>catgory</TableHead>
                   <TableHead>Deskripsi</TableHead>
                   <TableHead>Start Date</TableHead>
@@ -153,6 +113,7 @@ export default function Budget() {
                   <TableHead className="tw-text-right">
                     Amount this month
                   </TableHead>
+                 </TableRow>
                 </TableHeader>
                 <TableBody>
                 {budget.map((b) => (

@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { ApiUrl } from "@/lib/utils";
+import axios from "axios";
+import React, { useState } from "react";
 
 export default function Register() {
     const [form, setForm] = useState({
@@ -10,12 +12,29 @@ export default function Register() {
         confirmPassword: ''
     })
 
-    const handleSubmit = (e:any) => {
+    const handleSubmit = async(e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if(form.password !== form.confirmPassword) {
             alert('Password dan konfirmasi password tidak sama')
             return
         }
+
+        const formData = new FormData()
+
+        formData.append('username', form.username)
+        formData.append('fullname', form.fullname)
+        formData.append('password', form.password)
+        const response =await axios.post(`${ApiUrl()}/user`, formData, {
+          headers: {
+            'Content-Type' : 'multipart/form-data'
+          }
+        })
+
+        if(response.status === 201) {
+          alert('Register Success')
+          window.location.href = '/login'
+        }
+        
     }
 
 

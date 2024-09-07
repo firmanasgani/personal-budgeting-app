@@ -4,7 +4,7 @@ import { Input } from "../../components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ApiUrl } from "@/lib/utils";
 import axios from "axios";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/authContext";
 
 export default function Login() {
@@ -14,7 +14,6 @@ export default function Login() {
     username: "",
     password: "",
   });
-  const navigate = useNavigate();
   const { login } = useAuth()
 
   const url = ApiUrl();

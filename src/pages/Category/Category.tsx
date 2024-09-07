@@ -12,17 +12,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ApiUrl, formatNumberToRupiah } from "@/lib/utils";
+import { ICategory } from "@/lib/interface";
+import { ApiUrl, formatNumberToRupiah, UtilNextMonth, UtilToday } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react";
-interface ICategory {
-  id: string;
-  code: string;
-  name: string;
-  type: string;
-  total_ctg: number;
-  sum_ctg: number;
-}
+
 const Category = () => {
   const [category, setCategory] = useState<ICategory[]>([]);
   const [type, setType] = useState('')
@@ -35,7 +29,8 @@ const Category = () => {
   const [sumIncome, setSumIncome] = useState(0)
   const [sumExpenses, setSumExpenses] = useState(0)
   const [isloading, setIsLoading] = useState(true);
-
+  const [today, setToday] = useState(UtilToday)
+  const [nextMonth, setNextMonth] = useState(UtilNextMonth)
   const urlApi = ApiUrl();
 
   const fetchCategory = async () => {
@@ -48,13 +43,12 @@ const Category = () => {
     try {
       setErrorState(false)
       
-      const response = await axios.get(`${urlApi}/category?type=${type}`, config);
-    
-      const sum_expenses = response.data.categories.filter(c => c.type === 'expenses').reduce((a, b) => a + b.sum_ctg, 0);
+      const response = await axios.get<{ categories: ICategory[] }>(`${urlApi}/category?type=${type}&start_date=${today}&end_date=${nextMonth}`, config);
+      const sum_expenses = response.data.categories.filter(c => c.type === 'expenses').reduce<number>((a, b) => a + b.sum_ctg, 0);
       setSumExpenses(sum_expenses)
-      const sum_income = response.data.categories.filter(c => c.type === 'income').reduce((a, b) => a + b.sum_ctg, 0);
+      const sum_income = response.data.categories.filter(c => c.type === 'income').reduce<number>((a, b) => a + b.sum_ctg, 0);
       setSumIncome(sum_income)
-      setCategory(response.data.categories.map(c => ({ ...c, sum_expenses, sum_income })));
+      setCategory(response.data.categories.map<ICategory>(c => ({ ...c, sum_expenses, sum_income })));
     } catch (error) {
       setErrorState(true)
     } finally {
@@ -64,8 +58,10 @@ const Category = () => {
   };
 
   useEffect(() => {
-    fetchCategory();
-  }, [type]);
+    setTimeout(() => {
+      fetchCategory();
+    }, 500)
+  }, [type, today, nextMonth]);
 
   const handleChange = (event: any) => {
     setType(event.target.value); // Update the state with the selected value
@@ -81,7 +77,20 @@ const Category = () => {
             ))
             }
           </select> 
-          <Button variant={"default"}>Cari</Button>
+          <Input 
+            type='date'
+            className="tw-mr-2 tw-max-w-sm"
+            value={today}
+            onChange={(e) => setToday(e.target.value)}
+          />
+           <Input 
+            type='date'
+            className="tw-mr-2 tw-max-w-sm"
+            value={nextMonth}
+            onChange={(e) => setNextMonth(e.target.value)}
+          />
+
+          
         </div>
 
         <div className="tw-flex tw-flex-col tw-mt-4">
@@ -136,15 +145,15 @@ const Category = () => {
                   ))}
                 </TableBody>
                 <TableFooter>
-                  <TableRow className="tw-bg-gray-600 tw-text-white">
+                  <TableRow className="tw-bg-gray-400">
                     <TableCell colSpan={4}>Total Expenses</TableCell>
                     <TableCell className="tw-text-right">{isloading ? 0 : formatNumberToRupiah(sumExpenses)}</TableCell>
                   </TableRow>
-                  <TableRow className="tw-bg-gray-400">
+                  <TableRow className="tw-bg-gray-200">
                     <TableCell colSpan={4}>Total Income</TableCell>
                     <TableCell className="tw-text-right">{isloading ? 0 :formatNumberToRupiah(sumIncome)}</TableCell>
                   </TableRow>
-                  <TableRow className="tw-bg-gray-200">
+                  <TableRow className="tw-bg-gray-400">
                     <TableCell colSpan={4}>Total amount</TableCell>
                     <TableCell className="tw-text-right">{isloading ? 0 :formatNumberToRupiah(sumIncome-sumExpenses)}</TableCell>
                   </TableRow>
