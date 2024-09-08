@@ -1,5 +1,4 @@
 import Layout from "@/components/layout/layout";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -82,7 +81,7 @@ export default function Budget() {
             value={dateTo}
             onChange={(e) => setDateTo(e.target.value)}
           ></Input>
-          <Button variant={"default"} className="tw-max-w-sm">Cari</Button>
+          
         </div>
         <div className="tw-flex tw-flex-col tw-mt-4">
           <Card>

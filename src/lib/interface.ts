@@ -25,3 +25,12 @@ export interface IDetailTransaction {
   description: string;
   amount: number;
 }
+
+export interface IBudget {
+  id: string;
+  description: string;
+  categoryid: string;
+  amount: number;
+  start_date: string;
+  end_date: string;
+}

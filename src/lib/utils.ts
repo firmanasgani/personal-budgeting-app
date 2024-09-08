@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const ApiUrl = () => {
-  return 'http://localhost:5000'
+  return import.meta.env.VITE_APP_URI as string;
 }
 
 export const formatNumberToRupiah = (number: number | null) => {
