@@ -11,6 +11,7 @@ import {
   TableCell,
   TableFooter,
 } from "@/components/ui/table";
+import { fetchData } from "@/lib/apiClient";
 import { ICategory, ITranscations } from "@/lib/interface";
 import {
   ApiUrl,
@@ -20,8 +21,8 @@ import {
   UtilNextMonth,
   UtilToday,
 } from "@/lib/utils";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 export default function Transaction() {
@@ -36,24 +37,23 @@ export default function Transaction() {
   const [transactions, setTransactions] = useState<ITranscations[]>([]);
   const [category, setCategory] = useState<ICategory[]>([]);
   const [categoryId, setCategoryId] = useState("");
-  const token = localStorage.getItem("authToken");
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
+  const navigate = useNavigate()
+
   const fetchTransactions = async () => {
     try {
-      const { data } = await axios.get<{ transactions: ITranscations[] }>(
-        `${urlApi}/transactions?category=${categoryId}&start_date=${startDate}&end_date=${endDate}`,
-        config
-      );
+      const endpoint = `${urlApi}/transactions`
+      const queryParams = {
+        category: categoryId,
+        start_date: startDate,
+        end_date: endDate
+      }
+      const data = await fetchData<{ transactions: ITranscations[] }>({
+        endpoint,
+        queryParams
+      })
 
       const sumAmount = data.transactions.reduce((a, b) => a + b.amount, 0);
-
       setAmount(sumAmount)
-      
-
       setTransactions(data.transactions);
     } catch (err: any) {
       console.error(err.response.status)
@@ -63,12 +63,20 @@ export default function Transaction() {
   };
 
   const fetchCategory = async () => {
-    const { data } = await axios.get<{ categories: ICategory[] }>(
-      `${urlApi}/category`,
-      config
-    );
-
-    setCategory(data.categories.filter((c) => c.type === 'expenses'));
+    const endpoint =  `${urlApi}/category`
+    const queryParams = {
+      type: 'expenses'
+    }
+    try {
+      const data = await fetchData<{ categories: ICategory[]}>({
+        endpoint,
+        queryParams
+      })
+  
+      setCategory(data.categories);
+    }catch(err: any) {
+      console.log(err)
+    }
   };
 
   useEffect(() => {
@@ -81,9 +89,13 @@ export default function Transaction() {
     fetchCategory();
   }, []);
 
-  const handleCahnge = (event: any) => {
+  const handleChange = (event: any) => {
     setCategoryId(event.target.value);
   };
+
+  const handleTransactionDetail = (id: string) => {
+    navigate(`/transaction/${id}`)
+  }
 
   let nomor = 1;
   return (
@@ -93,7 +105,7 @@ export default function Transaction() {
           <select
             className="tw-w-[20%] tw-mr-2 tw-appearance-none tw-bg-background tw-border tw-border-input tw-rounded-md tw-py-2 tw-px-3 tw-text-sm tw-font-medium tw-text-foreground focus:tw-outline-none focus:tw-ring-1 sm:tw-w-[50%] md:tw-w-[35%] focus:tw-ring-ring focus:tw-border-primary"
             value={categoryId}
-            onChange={handleCahnge}
+            onChange={handleChange}
           >
             <option value="">Semua</option>
             {category.map((item) => (
@@ -117,17 +129,18 @@ export default function Transaction() {
         <div className="tw-flex tw-flex-col tw-mt-4">
           <Card>
             <CardHeader>
+              <div className="tw-flex tw-flex-row tw-gap-4 tw-justify-between">
               <CardTitle>
                 Pengeluaran Bulan {monthName[date.getMonth()]}
               </CardTitle>
-              <div className="tw-mt-4">
-                <a
+              <a
                   href="/transaction/add"
                   className="tw-bg-blue-500 tw-w-min-sm tw-text-white tw-text-sm tw-font-semibold tw-py-1 tw-px-2 tw-font-medium tw-rounded hover:tw-bg-blue-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
                 >
                   Buat Transaksi
                 </a>
               </div>
+            
             </CardHeader>
             <CardContent>
               <Table>
@@ -150,7 +163,7 @@ export default function Transaction() {
                       <p>Loading</p>
                     </TableCell>
                   </TableRow>
-                  ) : transactions.length < 1 ? (
+                  ) : (transactions.length < 1 )? (
                    <TableRow>
                      <TableCell colSpan={5}>
                       <p className="tw-text-center">Tidak ada data</p>
@@ -158,7 +171,12 @@ export default function Transaction() {
                    </TableRow>
                   ) : (
                     transactions.map((t) => (
-                      <TableRow key={t.id}>
+                      <TableRow 
+                        key={t.id} 
+                        className="hover:tw-bg-gray-300 tw-cursor-pointer"
+                        title={`Klik untuk lihat detil transaksi ${t.description}`}
+                        onClick={() => handleTransactionDetail(t.id)}
+                        >
                         <TableCell className="tw-font-medium">
                           {nomor++}
                         </TableCell>

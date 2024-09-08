@@ -50,11 +50,16 @@ export default function FormTransaction() {
       setIsLoading(true)
       e.preventDefault()
       if(form.description == '') {
-        alert('Description isLoading required')
+        alert('Description  required')
         return
       }
       if(form.amount == 0) {
-        alert('Amount isLoading required')
+        alert('Amount  required')
+        return
+      }
+
+      if(form.category_id == '') {
+        alert('Category  required')
         return
       }
       const formData = new FormData()

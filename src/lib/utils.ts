@@ -9,7 +9,8 @@ export const ApiUrl = () => {
   return 'http://localhost:5000'
 }
 
-export const formatNumberToRupiah = (number: number) => {
+export const formatNumberToRupiah = (number: number | null) => {
+  if (number === null) return 'Rp. 0';
   // Use Intl.NumberFormat with Indonesian locale and currency options
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
@@ -35,7 +36,18 @@ export const UtilNextMonth = () => {
   return next;
 }
 
-export function formatDate(dateString: string) {
+export const DateFormatInput = (dateString: string) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = `0${date.getMonth() + 1}`.slice(-2);
+  const day = `0${date.getDate()}`.slice(-2);
+  return `${year}-${month}-${day}`;
+}
+
+export function formatDate(dateString: string | null) {
+  if(dateString == null) {
+    return ''
+  }
   // Parse the date string
   const date = new Date(dateString);
 

@@ -1,5 +1,5 @@
 import Layout from "@/components/layout/layout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -19,7 +19,6 @@ import {
   UtilNextMonth,
   UtilToday,
 } from "@/lib/utils";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -36,28 +35,6 @@ const Category = () => {
   const [nextMonth, setNextMonth] = useState(UtilNextMonth);
   const urlApi = ApiUrl();
 
-  // const fetchCategory = async () => {
-  //   setIsLoading(true);
-  //   const token = localStorage.getItem("authToken");
-  //   const config = {
-  //     headers: { Authorization: `Bearer ${token}` },
-  //   };
-  //   try {
-  //     setErrorState(false)
-
-  //     const response = await axios.get<{ categories: ICategory[] }>(`${urlApi}/category?type=${type}&start_date=${today}&end_date=${nextMonth}`, config);
-  //     const sum_expenses = response.data.categories.filter(c => c.type === 'expenses').reduce<number>((a, b) => a + b.sum_ctg, 0);
-  //     setSumExpenses(sum_expenses)
-  //     const sum_income = response.data.categories.filter(c => c.type === 'income').reduce<number>((a, b) => a + b.sum_ctg, 0);
-  //     setSumIncome(sum_income)
-  //     setCategory(response.data.categories.map<ICategory>(c => ({ ...c, sum_expenses, sum_income })));
-  //   } catch (error) {
-  //     setErrorState(true)
-  //   } finally {
-  //     // do nothing
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const fetchCategories = async () => {
     setIsLoading(true);
@@ -172,7 +149,7 @@ const Category = () => {
                     category.map((c) => (
                       <TableRow
                         key={c.id}
-                        className="hover:tw-bg-gray-100 tw-cursor-pointer"
+                        className="hover:tw-bg-gray-300 tw-cursor-pointer"
                         title={`Lihat detil ${c.name}`}
                         onClick={() => handleCategoryDetail(c.id)}
                       >

@@ -11,6 +11,7 @@ import Transaction from "./pages/Transaction/Transaction";
 import FormBudget from "./pages/Forms/formBudget";
 import FormTransaction from "./pages/Forms/formTransaction";
 import DetailCategory from "./pages/Detil/Category";
+import DetailTransaction from "./pages/Detil/Transaction";
 
 export default function App() {
 
@@ -62,6 +63,10 @@ export default function App() {
       <Route
         path="/transaction/add"
         element={isAuthenticated() ? <FormTransaction /> : <Navigate to="/" />}
+      />
+        <Route
+        path="/transaction/:id"
+        element={isAuthenticated() ? <DetailTransaction /> : <Navigate to="/login" />}
       />
       <Route
         path="/register"

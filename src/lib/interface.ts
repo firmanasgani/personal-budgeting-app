@@ -16,3 +16,12 @@ export interface ITranscations {
   date_transaction: string;
   description: string;
 }
+
+export interface IDetailTransaction {
+  id: string;
+  categoryid: string;
+  categoryName: string;
+  date_transaction: string;
+  description: string;
+  amount: number;
+}
