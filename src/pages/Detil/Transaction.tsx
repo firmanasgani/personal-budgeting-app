@@ -214,6 +214,7 @@ const DetailTransaction = () => {
                     name="category"
                     value={form.category}
                     disabled={isEdit}
+                    onChange={(e) => setForm({...form, category: e.target.value})}
                     className="tw-border tw-rounded tw-p-2 tw-bg-white tw-text-sm focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-blue-500 focus:tw-border-blue-500"
                   >
                     {category.map((c) => (
