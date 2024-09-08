@@ -1,6 +1,5 @@
 // src/components/Navbar.tsx
 
-import { useAuth } from '@/hooks/authContext';
 import React, { useState } from 'react';
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);

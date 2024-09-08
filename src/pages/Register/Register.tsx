@@ -34,7 +34,6 @@ export default function Register() {
           alert('Register Success')
           window.location.href = '/login'
         }
-        
     }
 
 

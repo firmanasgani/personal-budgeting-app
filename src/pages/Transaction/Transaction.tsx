@@ -174,7 +174,7 @@ export default function Transaction() {
                 </TableBody>
                 <TableFooter>
                   <TableRow>
-                    <TableCell colSpan={4}>Total Income</TableCell>
+                    <TableCell colSpan={4}>Total Expenses</TableCell>
                     <TableCell className="tw-text-right">{formatNumberToRupiah(amount)}</TableCell>
                   </TableRow>
                 </TableFooter>
