@@ -175,7 +175,7 @@ export default function Transaction() {
                         key={t.id} 
                         className="hover:tw-bg-gray-300 tw-cursor-pointer"
                         title={`Klik untuk lihat detil transaksi ${t.description}`}
-                        onClick={() => handleTransactionDetail(t.id)}
+                        onDoubleClick={() => handleTransactionDetail(t.id)}
                         >
                         <TableCell className="tw-font-medium">
                           {nomor++}
