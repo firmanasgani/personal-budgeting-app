@@ -36,7 +36,7 @@ export default function FormCategory() {
       formData.append('code', form.code)
       formData.append('type', form.tipe)
       const responses = await axios.post(`${ApiUrl()}/category`, formData, config)
-      console.log(formData)
+    
       if(responses.status == 201) {
         alert('Category saved successfully')
         setForm({

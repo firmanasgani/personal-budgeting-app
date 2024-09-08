@@ -10,6 +10,7 @@ import Budget from "./pages/Budget/budget";
 import Transaction from "./pages/Transaction/Transaction";
 import FormBudget from "./pages/Forms/formBudget";
 import FormTransaction from "./pages/Forms/formTransaction";
+import DetailCategory from "./pages/Detil/Category";
 
 export default function App() {
 
@@ -41,6 +42,10 @@ export default function App() {
       <Route
         path="/category/add"
         element={isAuthenticated() ? <FormCategory /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/category/:id"
+        element={isAuthenticated() ? <DetailCategory /> : <Navigate to="/login" />}
       />
       <Route
         path="/budget"

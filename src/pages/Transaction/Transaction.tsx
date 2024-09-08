@@ -135,7 +135,7 @@ export default function Transaction() {
                 <TableHeader>
                   <TableRow className="tw-bg-red-100">
                     <TableHead className="w-[50px]">No.</TableHead>
-                    <TableHead>catgory</TableHead>
+                    <TableHead>Kategori</TableHead>
                     <TableHead>Deskripsi</TableHead>
                     <TableHead>Tanggal Transaksi</TableHead>
                     <TableHead className="tw-text-right">

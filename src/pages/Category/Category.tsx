@@ -11,93 +11,128 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { fetchData } from "@/lib/apiClient";
 import { ICategory } from "@/lib/interface";
-import { ApiUrl, formatNumberToRupiah, UtilNextMonth, UtilToday } from "@/lib/utils";
+import {
+  ApiUrl,
+  formatNumberToRupiah,
+  UtilNextMonth,
+  UtilToday,
+} from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Category = () => {
+  const navigate = useNavigate();
   const [category, setCategory] = useState<ICategory[]>([]);
-  const [type, setType] = useState('')
+  const [type, setType] = useState("");
   const [errorState, setErrorState] = useState(false);
-  const selectType = [
-    'semua',
-    'income',
-    'expenses'
-  ]
-  const [sumIncome, setSumIncome] = useState(0)
-  const [sumExpenses, setSumExpenses] = useState(0)
+  const selectType = ["semua", "income", "expenses"];
+  const [sumIncome, setSumIncome] = useState(0);
+  const [sumExpenses, setSumExpenses] = useState(0);
   const [isloading, setIsLoading] = useState(true);
-  const [today, setToday] = useState(UtilToday)
-  const [nextMonth, setNextMonth] = useState(UtilNextMonth)
+  const [today, setToday] = useState(UtilToday);
+  const [nextMonth, setNextMonth] = useState(UtilNextMonth);
   const urlApi = ApiUrl();
 
-  const fetchCategory = async () => {
+  // const fetchCategory = async () => {
+  //   setIsLoading(true);
+  //   const token = localStorage.getItem("authToken");
+  //   const config = {
+  //     headers: { Authorization: `Bearer ${token}` },
+  //   };
+  //   try {
+  //     setErrorState(false)
+
+  //     const response = await axios.get<{ categories: ICategory[] }>(`${urlApi}/category?type=${type}&start_date=${today}&end_date=${nextMonth}`, config);
+  //     const sum_expenses = response.data.categories.filter(c => c.type === 'expenses').reduce<number>((a, b) => a + b.sum_ctg, 0);
+  //     setSumExpenses(sum_expenses)
+  //     const sum_income = response.data.categories.filter(c => c.type === 'income').reduce<number>((a, b) => a + b.sum_ctg, 0);
+  //     setSumIncome(sum_income)
+  //     setCategory(response.data.categories.map<ICategory>(c => ({ ...c, sum_expenses, sum_income })));
+  //   } catch (error) {
+  //     setErrorState(true)
+  //   } finally {
+  //     // do nothing
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const fetchCategories = async () => {
     setIsLoading(true);
-   
-    const token = localStorage.getItem("authToken");
-    const config = {
-      headers: { Authorization: `Bearer ${token}` },
-    };
+    const endpoint = `${urlApi}/category`;
+    const queryParams = { type, start_date: today, end_date: nextMonth };
     try {
-      setErrorState(false)
-      
-      const response = await axios.get<{ categories: ICategory[] }>(`${urlApi}/category?type=${type}&start_date=${today}&end_date=${nextMonth}`, config);
-      const sum_expenses = response.data.categories.filter(c => c.type === 'expenses').reduce<number>((a, b) => a + b.sum_ctg, 0);
-      setSumExpenses(sum_expenses)
-      const sum_income = response.data.categories.filter(c => c.type === 'income').reduce<number>((a, b) => a + b.sum_ctg, 0);
+      const data = await fetchData<{ categories: ICategory[] }>({
+        endpoint,
+        queryParams,
+      });
+      const sum_expenses = data.categories
+        .filter((c) => c.type === "expenses")
+        .reduce<number>((a, b) => a + b.sum_ctg, 0);
+      setSumExpenses(sum_expenses);
+      const sum_income = data.categories
+        .filter((c) => c.type === "income")
+        .reduce<number>((a, b) => a + b.sum_ctg, 0);
       setSumIncome(sum_income)
-      setCategory(response.data.categories.map<ICategory>(c => ({ ...c, sum_expenses, sum_income })));
+      setCategory(data.categories);
     } catch (error) {
-      setErrorState(true)
+      setErrorState(true);
     } finally {
-      // do nothing
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
     setTimeout(() => {
-      fetchCategory();
-    }, 500)
+      fetchCategories();
+    }, 500);
   }, [type, today, nextMonth]);
 
   const handleChange = (event: any) => {
     setType(event.target.value); // Update the state with the selected value
   };
+
+  const handleCategoryDetail = (id: string) => {
+    navigate(`/category/${id}`);
+  };
+
   return (
     <Layout>
       <div className="tw-flex tw-flex-col tw-m-10">
-        <div className="tw-flex tw-flex-row tw-mt-4 tw-mb-4">
-          
-          <select className="tw-w-[20%] tw-mr-2 tw-appearance-none tw-bg-background tw-border tw-border-input tw-rounded-md tw-py-2 tw-px-3 tw-text-sm tw-font-medium tw-text-foreground focus:tw-outline-none focus:tw-ring-1 sm:tw-w-[50%] md:tw-w-[35%] focus:tw-ring-ring focus:tw-border-primary" value={type}  onChange={handleChange}>
+        <div className="tw-flex tw-flex-row tw-mt-4 tw-mb-4 tw-justify-between">
+          <select
+            className="tw-w-[20%] tw-mr-2 tw-appearance-none tw-bg-background tw-border tw-border-input tw-rounded-md tw-py-2 tw-px-3 tw-text-sm tw-font-medium tw-text-foreground focus:tw-outline-none focus:tw-ring-1 sm:tw-w-[50%] md:tw-w-[35%] focus:tw-ring-ring focus:tw-border-primary"
+            value={type}
+            onChange={handleChange}
+          >
             {selectType.map((t) => (
-              <option key={t} value={t == 'semua' ? '' : t}>{t}</option>
-            ))
-            }
-          </select> 
-          <Input 
-            type='date'
+              <option key={t} value={t == "semua" ? "" : t}>
+                {t}
+              </option>
+            ))}
+          </select>
+          <Input
+            type="date"
             className="tw-mr-2 tw-max-w-sm"
             value={today}
             onChange={(e) => setToday(e.target.value)}
           />
-           <Input 
-            type='date'
+          <Input
+            type="date"
             className="tw-mr-2 tw-max-w-sm"
             value={nextMonth}
             onChange={(e) => setNextMonth(e.target.value)}
           />
-
-          
         </div>
 
         <div className="tw-flex tw-flex-col tw-mt-4">
           <Card>
             <CardHeader>
-              <CardTitle>Category</CardTitle>
+              <div className="tw-flex tw-flex-row tw-align-center tw-justify-between">
+                <h1 className="tw-text-2xl">List Kategori </h1>
 
-              <div className="tw-mt-4">
                 <a
                   href="/category/add"
                   className="tw-bg-blue-500 tw-text-white tw-text-sm tw-font-semibold tw-py-1 tw-px-2 tw-font-medium tw-rounded hover:tw-bg-blue-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
@@ -123,38 +158,57 @@ const Category = () => {
                 <TableBody>
                   {isloading ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="tw-text-center">Fetching data...</TableCell>
+                      <TableCell colSpan={5} className="tw-text-center">
+                        Fetching data...
+                      </TableCell>
                     </TableRow>
-                  ) :( errorState ? (
+                  ) : errorState ? (
                     <TableRow>
-                    <TableCell colSpan={5} className="tw-text-center">Catetgory not found</TableCell>
-                  </TableRow>
+                      <TableCell colSpan={5} className="tw-text-center">
+                        Catetgory not found
+                      </TableCell>
+                    </TableRow>
                   ) : (
                     category.map((c) => (
-                      <TableRow key={c.id}>
+                      <TableRow
+                        key={c.id}
+                        className="hover:tw-bg-gray-100 tw-cursor-pointer"
+                        title={`Lihat detil ${c.name}`}
+                        onClick={() => handleCategoryDetail(c.id)}
+                      >
                         <TableCell className="tw-font-medium">
                           {c.name}
                         </TableCell>
                         <TableCell>{c.code}</TableCell>
                         <TableCell>{c.type}</TableCell>
                         <TableCell>{c.total_ctg}</TableCell>
-                        <TableCell className="tw-text-right">{formatNumberToRupiah(c.sum_ctg)}</TableCell>
+                        <TableCell className="tw-text-right">
+                          {formatNumberToRupiah(c.sum_ctg)}
+                        </TableCell>
                       </TableRow>
                     ))
-                  ))}
+                  )}
                 </TableBody>
                 <TableFooter>
                   <TableRow className="tw-bg-gray-400">
                     <TableCell colSpan={4}>Total Expenses</TableCell>
-                    <TableCell className="tw-text-right">{isloading ? 0 : formatNumberToRupiah(sumExpenses)}</TableCell>
+                    <TableCell className="tw-text-right">
+                      {isloading ? 0 : formatNumberToRupiah(sumExpenses)}
+                    </TableCell>
                   </TableRow>
                   <TableRow className="tw-bg-gray-200">
                     <TableCell colSpan={4}>Total Income</TableCell>
-                    <TableCell className="tw-text-right">{isloading ? 0 :formatNumberToRupiah(sumIncome)}</TableCell>
+                    <TableCell className="tw-text-right">
+                      {isloading ? 0 : formatNumberToRupiah(sumIncome)}
+                    </TableCell>
                   </TableRow>
                   <TableRow className="tw-bg-gray-400">
                     <TableCell colSpan={4}>Total amount</TableCell>
-                    <TableCell className="tw-text-right">{isloading ? 0 :formatNumberToRupiah(sumIncome-sumExpenses)}</TableCell>
+                    <TableCell className="tw-text-right">
+                      {isloading
+                        ? 0
+                        : formatNumberToRupiah(sumIncome - sumExpenses)}
+                    </TableCell>
                   </TableRow>
                 </TableFooter>
               </Table>
