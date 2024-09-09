@@ -1,33 +1,83 @@
 import Layout from "@/components/layout/layout";
-import { useState } from "react";
+import { fetchData } from "@/lib/apiClient";
+import { ICategory } from "@/lib/interface";
+import { ApiUrl, formatNumberToRupiah, UtilNextMonth, UtilToday } from "@/lib/utils";
+import axios from "axios";
+import {  useEffect, useState } from "react";
 
 export default function FormBudget() {
-  
-  const date = new Date()
-  const month = date.getMonth()
-  const monthNow = month < 10 ? `0${month}` : `${month}`
-  const monthNext = month + 1 ? `0${month+1}` : `${month+1}`
-  const today = `${date.getFullYear()}-${monthNow}-25`
-  const next = `${date.getFullYear()}-${monthNext}-24`
+  const [category, setCategory] = useState<ICategory[]>([])
+  const [categoryId, setCategoryId] = useState('')
+  const urlApi = ApiUrl()
+  const fetchCategories = async() => {
+    try {
+      const endpoint = `${urlApi}/category`
+      const queryParams = {
+        type: 'expenses'
+      }
+      const data = await fetchData<{categories: ICategory[]}>({
+        endpoint,
+        queryParams
+      })
+
+      setCategory(data.categories)
+    }catch(err: any) {
+      console.error(err)
+    }
+  }
 
   const [form, setForm] = useState({
     category: '',
     description: '',
     amount: 0,
-    startDate: today,
-    endDate: next
+    startDate: UtilToday(),
+    endDate: UtilNextMonth()
   });
 
-  const handleBudget = () => {
+  useEffect(() => {
+    fetchCategories()
+  }, [])
   
+  const handleBudget = async(e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    try {
+        if(form.amount === 0) {
+          alert('Jumlah harus diisi')
+          return
+        }
+        const formData = new FormData()
+        formData.append('category_id', form.category)
+        formData.append('amount', form.amount.toString())
+        formData.append('start_date', form.startDate)
+        formData.append('end_date', form.endDate)
+        formData.append('description', form.description)
+        const responses = await axios.post(`${urlApi}/budget`, formData, {headers : {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`
+        }})
+        if(responses.status === 200) {
+          alert('Berhasil membuat budget')
+          setForm({
+            category: '',
+            description: '',
+            amount: 0,
+            startDate: UtilToday(),
+            endDate: UtilNextMonth()
+          })
+        }
+
+    }catch(err: any) {
+      console.error(err)
+    }
   };
+
+ 
 
   return (
     <Layout>
       <div className="tw-flex tw-flex-col tw-m-10 tw-h-svh">
         <h1 className="tw-mt-2 tw-font-bold">Buat Budget Baru</h1>
-        <form className="tw-mt-5">
-          
+        <form className="tw-mt-5" onSubmit={handleBudget}>
+          {form.category}
           <div className="tw-flex tw-flex-col tw-mt-2">
             <label htmlFor="category">Kategori</label>
             <select
@@ -36,8 +86,9 @@ export default function FormBudget() {
               id="category"
               onChange={(e) => setForm({...form, category: e.target.value})}
             >
-              <option value="expenses">Expenses</option>
-              <option value="income">Income</option>
+              {category.map((c) => (
+                <option value={c.id} key={c.id}>{c.name}</option>
+              ))}
             </select>
           </div>
           <div className="tw-flex tw-flex-col tw-mt-2">
@@ -60,6 +111,7 @@ export default function FormBudget() {
               onChange={(e) => setForm({ ...form, amount: parseInt(e.target.value) })}
               className="tw-border tw-rounded tw-p-2"
             />
+            {formatNumberToRupiah(isNaN(form.amount) ? 0 : form.amount)}
           </div>
           <div className="tw-flex tw-flex-col tw-mt-2">
             <label htmlFor="startDate">Tanggal Mulai</label>
@@ -83,7 +135,7 @@ export default function FormBudget() {
           </div>
           <div className="tw-flex tw-flex-col tw-mt-6">
             <button
-              onClick={handleBudget}
+             
               className="tw-bg-blue-500 tw-text-white tw-font-semibold tw-py-2 tw-px-4 tw-rounded hover:tw-bg-blue-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
             >
               Tambah Budget

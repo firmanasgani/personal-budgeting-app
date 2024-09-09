@@ -151,7 +151,7 @@ const Category = () => {
                         key={c.id}
                         className="hover:tw-bg-gray-300 tw-cursor-pointer"
                         title={`Lihat detil ${c.name}`}
-                        onClick={() => handleCategoryDetail(c.id)}
+                        onDoubleClick={() => handleCategoryDetail(c.id)}
                       >
                         <TableCell className="tw-font-medium">
                           {c.name}

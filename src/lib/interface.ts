@@ -30,6 +30,7 @@ export interface IBudget {
   id: string;
   description: string;
   categoryid: string;
+  categoryName: string;
   amount: number;
   start_date: string;
   end_date: string;

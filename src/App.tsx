@@ -7,6 +7,7 @@ import Category from "./pages/Category/Category";
 import FormCategory from "./pages/Forms/formCategory";
 import Register from "./pages/Register/Register";
 import Budget from "./pages/Budget/budget";
+import DetailBudget from "./pages/Detil/Budget";
 import Transaction from "./pages/Transaction/Transaction";
 import FormBudget from "./pages/Forms/formBudget";
 import FormTransaction from "./pages/Forms/formTransaction";
@@ -55,6 +56,10 @@ export default function App() {
       <Route
         path="/budget/add"
         element={isAuthenticated() ? <FormBudget /> : <Navigate to="/" />}
+      />
+      <Route
+        path="/budget/:id"
+        element={isAuthenticated() ? <DetailBudget /> : <Navigate to="/login" />}
       />
       <Route
         path="/transaction"
