@@ -27,9 +27,9 @@ export interface IDetailTransaction {
 }
 
 export interface IBudget {
-  id: string;
+  id?: string;
   description: string;
-  categoryid: string;
+  categoryid?: string;
   categoryName: string;
   amount: number;
   start_date: string;
