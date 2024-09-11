@@ -38,45 +38,42 @@ export default function App() {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/login" element={isAuthenticated() ? <Navigate to="/" /> : <Login />} />
       <Route
-        path="/category"
-        element={isAuthenticated() ? <Category /> : <Navigate to="/login" />}
-      />
-      <Route
-        path="/category/add"
-        element={isAuthenticated() ? <FormCategory /> : <Navigate to="/login" />}
-      />
-      <Route
-        path="/category/:id"
-        element={isAuthenticated() ? <DetailCategory /> : <Navigate to="/login" />}
-      />
-      <Route
-        path="/budget"
-        element={isAuthenticated() ? <Budget /> : <Navigate to="/" />}
-      />
-      <Route
-        path="/budget/add"
-        element={isAuthenticated() ? <FormBudget /> : <Navigate to="/" />}
-      />
-      <Route
-        path="/budget/:id"
-        element={isAuthenticated() ? <DetailBudget /> : <Navigate to="/login" />}
-      />
-      <Route
-        path="/transaction"
-        element={isAuthenticated() ? <Transaction /> : <Navigate to="/" />}
-      />
-      <Route
-        path="/transaction/add"
-        element={isAuthenticated() ? <FormTransaction /> : <Navigate to="/" />}
-      />
-        <Route
-        path="/transaction/:id"
-        element={isAuthenticated() ? <DetailTransaction /> : <Navigate to="/login" />}
-      />
-      <Route
         path="/register"
         element={isAuthenticated() ? <Navigate to="/" /> : <Register />}
       ></Route>
+      <Route
+        path="/category"
+        element={isAuthenticated() ? (
+          <Routes>
+            <Route index element={<Category />} />
+            <Route path="add" element={<FormCategory />} />
+            <Route path=":id" element={<DetailCategory />} />
+          </Routes>
+        ) : <Navigate to="/login" />}
+      />
+      
+      <Route
+       path="/budget"
+       element={isAuthenticated() ? (
+         <Routes>
+           <Route index element={<Budget />} />
+           <Route path="add" element={<FormBudget />} />
+           <Route path=":id" element={<DetailBudget />} />
+         </Routes>
+       ) : <Navigate to="/login" />}
+     />
+       <Route
+       path="/transaction"
+       element={isAuthenticated() ? (
+         <Routes>
+           <Route index element={<Transaction />} />
+           <Route path="add" element={<FormTransaction />} />
+           <Route path=":id" element={<DetailTransaction />} />
+         </Routes>
+       ) : <Navigate to="/login" />}
+     />
+  
+    
     </Routes>
   );
 }
