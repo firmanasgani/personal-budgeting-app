@@ -11,7 +11,7 @@ import DetailBudget from "./pages/Detil/Budget";
 import Transaction from "./pages/Transaction/Transaction";
 import FormBudget from "./pages/Forms/formBudget";
 import FormTransaction from "./pages/Forms/formTransaction";
-import DetailCategory from "./pages/Detil/Category";
+import DetailCategory from "./pages/Category/DetailCategory";
 import DetailTransaction from "./pages/Detil/Transaction";
 
 export default function App() {

@@ -1,3 +1,4 @@
+import { fetchCategory } from "@/api/fetchCategory";
 import Layout from "@/components/layout/layout";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,60 +12,51 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { fetchData } from "@/lib/apiClient";
 import { ICategory } from "@/lib/interface";
-import {
-  ApiUrl,
-  formatNumberToRupiah,
-  UtilNextMonth,
-  UtilToday,
-} from "@/lib/utils";
+import { formatNumberToRupiah, UtilNextMonth, UtilToday } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Category = () => {
   const navigate = useNavigate();
-  const [category, setCategory] = useState<ICategory[]>([]);
   const [type, setType] = useState("");
-  const [errorState, setErrorState] = useState(false);
   const selectType = ["semua", "income", "expenses"];
+  const [isLoading, setIsLoading] = useState(true)
+  const [categories, setCategories] = useState<ICategory[]>([])
+  const [errorState, setErrorState] = useState(null)
   const [sumIncome, setSumIncome] = useState(0);
   const [sumExpenses, setSumExpenses] = useState(0);
-  const [isloading, setIsLoading] = useState(true);
   const [today, setToday] = useState(UtilToday);
   const [nextMonth, setNextMonth] = useState(UtilNextMonth);
-  const urlApi = ApiUrl();
 
-
-  const fetchCategories = async () => {
-    setIsLoading(true);
-    const endpoint = `${urlApi}/category`;
-    const queryParams = { type, start_date: today, end_date: nextMonth };
+  const getCategories = async() => {
     try {
-      const data = await fetchData<{ categories: ICategory[] }>({
-        endpoint,
-        queryParams,
+      setIsLoading(true)
+      setErrorState(null)
+      const fetch_category = await fetchCategory({
+        type,
+        start_date: today,
+        end_date: nextMonth
       });
-      const sum_expenses = data.categories
-        .filter((c) => c.type === "expenses")
-        .reduce<number>((a, b) => a + b.sum_ctg, 0);
-      setSumExpenses(sum_expenses);
-      const sum_income = data.categories
-        .filter((c) => c.type === "income")
-        .reduce<number>((a, b) => a + b.sum_ctg, 0);
-      setSumIncome(sum_income)
-      setCategory(data.categories);
-    } catch (error) {
-      setErrorState(true);
-    } finally {
-      setIsLoading(false);
+      const sum_expenses = fetch_category
+      .filter((c) => c.type === "expenses")
+      .reduce<number>((a, b) => a + b.sum_ctg, 0);
+    setSumExpenses(sum_expenses);
+    const sum_income = fetch_category
+      .filter((c) => c.type === "income")
+      .reduce<number>((a, b) => a + b.sum_ctg, 0);
+    setSumIncome(sum_income);
+    setCategories(fetch_category)
+    }catch(error: any) {
+      setErrorState(error)
+    }finally{
+      setIsLoading(false)
     }
-  };
+  }
+  
 
   useEffect(() => {
-    setTimeout(() => {
-      fetchCategories();
-    }, 500);
+    getCategories()
   }, [type, today, nextMonth]);
 
   const handleChange = (event: any) => {
@@ -74,6 +66,7 @@ const Category = () => {
   const handleCategoryDetail = (id: string) => {
     navigate(`/category/${id}`);
   };
+
 
   return (
     <Layout>
@@ -133,7 +126,7 @@ const Category = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {isloading ? (
+                  {isLoading ? (
                     <TableRow>
                       <TableCell colSpan={5} className="tw-text-center">
                         Fetching data...
@@ -146,7 +139,7 @@ const Category = () => {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    category.map((c) => (
+                    categories.map((c) => (
                       <TableRow
                         key={c.id}
                         className="hover:tw-bg-gray-300 tw-cursor-pointer"
@@ -170,19 +163,19 @@ const Category = () => {
                   <TableRow className="tw-bg-gray-400">
                     <TableCell colSpan={4}>Total Expenses</TableCell>
                     <TableCell className="tw-text-right">
-                      {isloading ? 0 : formatNumberToRupiah(sumExpenses)}
+                      {isLoading ? 0 : formatNumberToRupiah(sumExpenses)}
                     </TableCell>
                   </TableRow>
                   <TableRow className="tw-bg-gray-200">
                     <TableCell colSpan={4}>Total Income</TableCell>
                     <TableCell className="tw-text-right">
-                      {isloading ? 0 : formatNumberToRupiah(sumIncome)}
+                      {isLoading ? 0 : formatNumberToRupiah(sumIncome)}
                     </TableCell>
                   </TableRow>
                   <TableRow className="tw-bg-gray-400">
                     <TableCell colSpan={4}>Total amount</TableCell>
                     <TableCell className="tw-text-right">
-                      {isloading
+                      {isLoading
                         ? 0
                         : formatNumberToRupiah(sumIncome - sumExpenses)}
                     </TableCell>
