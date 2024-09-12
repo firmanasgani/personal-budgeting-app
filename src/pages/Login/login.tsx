@@ -2,11 +2,9 @@ import {  useState } from "react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { ApiUrl } from "@/lib/utils";
-import axios from "axios";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/authContext";
-
+import { authLogin } from "@/api/auth";
 export default function Login() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -18,14 +16,10 @@ export default function Login() {
 
   const { login } = useAuth()
 
-  const url = ApiUrl();
-
   const token = localStorage.getItem('authToken')
   if(token != null) {
     return <Navigate to="/dashboard" />
   }
-
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setLoading(true);
     e.preventDefault();
@@ -49,17 +43,14 @@ export default function Login() {
       }
       formData.append("username", form.username);
       formData.append("password", form.password);
-      const response = await axios.post(`${url}/login`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data", // Set the content type to multipart/form-data
-        },
-      });
+      const response = await authLogin(formData);
+      console.log(response.acces)
 
       // Handle successful login
      
-      localStorage.setItem("refreshToken", response.data.refresh_token);
-      localStorage.setItem("userData", JSON.stringify(response.data.users));
-      login(response.data.access_token)
+      localStorage.setItem("refreshToken", response.refresh_token);
+      localStorage.setItem("userData", JSON.stringify(response.users));
+      login(response.access_token)
     } catch (error) {
       console.error(error);
       alert("An unexpected error occurred");

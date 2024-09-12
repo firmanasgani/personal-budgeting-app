@@ -6,11 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { fetchData } from "@/lib/apiClient";
-import { ICategory } from "@/lib/interface";
 import { ApiUrl } from "@/lib/utils";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const FormCategory = ({
@@ -129,42 +127,13 @@ const FormCategory = ({
 
 const DetailCategory = () => {
   const { id } = useParams();
-  const [category, setCategory] = useState<ICategory[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [errorMsg, setErrorMsg] = useState('')
+  // use useCategory to fetch data with params
   const urlApi = ApiUrl();
   const [isEdit, setIsEdit] = useState(true);
   const navigate = useNavigate()
+  const categories = {}
 
-  const fetchCategory = async () => {
-    try {
-      setLoading(true);
-      setErrorMsg('')
-      const endpoint = `${urlApi}/category/${id}`;
-      const queryParams = {};
-      const data = await fetchData<{ category: ICategory[] }>({
-        endpoint,
-        queryParams,
-      });
-      setCategory(data.category);
-    } catch (err: any) {
-      if (err.status === 401) {
-        localStorage.clear();
-        window.location.reload();
-      }
-      if(err.status == 404) {
-        setErrorMsg('Kategori tidak ditemukan')
-      }
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCategory();
-  }, []);
+ 
 
   const handleIsEdit = () => {
     setIsEdit(!isEdit);
@@ -194,7 +163,7 @@ const DetailCategory = () => {
   const DetailComponent = () => {
     return (
       <>
-        {category.map((c) => (
+        {categories.map((c) => (
           <Card key={c.id}>
             <CardHeader>
               <CardTitle>{c.name}</CardTitle>
@@ -237,7 +206,7 @@ const DetailCategory = () => {
             <DetailComponent />
           )}
             
-          {category.map((c) => (
+          {categories.map((c) => (
             <FormCategory key={c.id} id={c.id} name={c.name} code={c.code} tipe={c.type} editable={isEdit} />
           ))}
         </div>

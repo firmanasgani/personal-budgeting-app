@@ -1,3 +1,4 @@
+import { authRegister } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ApiUrl } from "@/lib/utils";
@@ -20,15 +21,10 @@ export default function Register() {
         }
 
         const formData = new FormData()
-
         formData.append('username', form.username)
         formData.append('fullname', form.fullname)
         formData.append('password', form.password)
-        const response =await axios.post(`${ApiUrl()}/user`, formData, {
-          headers: {
-            'Content-Type' : 'multipart/form-data'
-          }
-        })
+        const response =await authRegister(formData)
 
         if(response.status === 201) {
           alert('Register Success')

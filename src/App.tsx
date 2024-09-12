@@ -4,15 +4,15 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Category from "./pages/Category/Category";
-import FormCategory from "./pages/Forms/formCategory";
+import FormCategory from "./pages/Category/formCategory";
 import Register from "./pages/Register/Register";
 import Budget from "./pages/Budget/budget";
-import DetailBudget from "./pages/Detil/Budget";
+import DetailBudget from "./pages/Budget/DetailBudget";
 import Transaction from "./pages/Transaction/Transaction";
-import FormBudget from "./pages/Forms/formBudget";
-import FormTransaction from "./pages/Forms/formTransaction";
+import FormBudget from "./pages/Budget/formBudget";
+import FormTransaction from "./pages/Transaction/formTransaction";
 import DetailCategory from "./pages/Category/DetailCategory";
-import DetailTransaction from "./pages/Detil/Transaction";
+import DetailTransaction from "./pages/Transaction/DetailTransaction";
 
 export default function App() {
 
