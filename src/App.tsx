@@ -31,46 +31,46 @@ export default function App() {
   return (
     <Routes>
       <Route
-        path="/"
-        element={isAuthenticated() ? <Dashboard /> : <Navigate to="/login" />}
+        path=""
+        element={isAuthenticated() ? <Navigate to="dashboard" /> : <Navigate to="login" />}
       />
-
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/login" element={isAuthenticated() ? <Navigate to="/" /> : <Login />} />
+      <Route path="dashboard" element={isAuthenticated() ? <Dashboard /> : <Login />} />
+      <Route path="login" element={isAuthenticated() ? <Navigate to="/" /> : <Login />} />
       <Route
-        path="/register"
+        path="register"
         element={isAuthenticated() ? <Navigate to="/" /> : <Register />}
       ></Route>
       <Route
-        path="/category"
+        path="category/*"
         element={isAuthenticated() ? (
           <Routes>
             <Route index element={<Category />} />
             <Route path="add" element={<FormCategory />} />
             <Route path=":id" element={<DetailCategory />} />
+          
           </Routes>
-        ) : <Navigate to="/login" />}
+        ) : <Navigate to="login" />}
       />
       
       <Route
-       path="/budget"
+       path="budget/*"
        element={isAuthenticated() ? (
          <Routes>
            <Route index element={<Budget />} />
            <Route path="add" element={<FormBudget />} />
            <Route path=":id" element={<DetailBudget />} />
          </Routes>
-       ) : <Navigate to="/login" />}
+       ) : <Navigate to="login" />}
      />
        <Route
-       path="/transaction"
+       path="transaction/*"
        element={isAuthenticated() ? (
          <Routes>
            <Route index element={<Transaction />} />
            <Route path="add" element={<FormTransaction />} />
            <Route path=":id" element={<DetailTransaction />} />
          </Routes>
-       ) : <Navigate to="/login" />}
+       ) : <Navigate to="login" />}
      />
   
     

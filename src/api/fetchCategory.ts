@@ -32,23 +32,23 @@ export const fetchCategory = async (params?: {
 
 export const getCategoryById = async (id: string): Promise<ICategory> => {
   const url = `${urlApi}/category/${id}`;
-  const { data } = await axios.get<ICategory>(url, config);
-  return data;
+  const data = await axios.get(url, config);
+  return data.data.category[0];
 };
 
-export const createCategory = async (formData: FormData): Promise<ICategory> => {
+export const createCategory = async (formData: FormData) => {
   const url = `${urlApi}/category`;
-  const { data } = await axios.post<ICategory>(url, formData, config);
-  return data;
+  const data = await axios.post(url, formData, config);
+  return data.data;
 };
 
 export const updateCategory = async (
   id: string,
   formData: FormData
-): Promise<ICategory> => {
+): Promise<ICategory[]> => {
   const url = `${urlApi}/category/${id}`;
-  const { data } = await axios.put<ICategory>(url, formData, config);
-  return data;
+  const data = await axios.put<ICategory[]>(url, formData, config);
+  return data.data;
 };
 
 export const deleteCategory = async (id: string): Promise<void> => {

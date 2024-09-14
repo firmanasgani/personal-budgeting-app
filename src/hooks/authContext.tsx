@@ -31,7 +31,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = (token: string) => {
     localStorage.setItem('authToken', token);
     setIsAuthenticated(true);
-    navigate('/dashboard'); // Redirect to protected route after login
+    window.location.href = '/'
+    // Redirect to protected route after login
   };
 
   const logout = () => {

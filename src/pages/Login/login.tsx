@@ -1,12 +1,12 @@
 import {  useState } from "react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { useToast } from "@/hooks/use-toast";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/authContext";
 import { authLogin } from "@/api/auth";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 export default function Login() {
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     username: "",
@@ -27,33 +27,42 @@ export default function Login() {
     try {
       const formData = new FormData();
       if (!form || !form.username) {
-        toast({
-          title: "Uh oh! Something went wrong.",
-          description: "There was a problem with your request.",
-        });
+        toast.error('Username still blank', {
+          position: "bottom-right"
+        })
         return;
       }
   
       if (!form.password) {
-        toast({
-          title: "Password is required",
-          description: "Please enter your password.",
-        });
+        toast.error('Password still blank', {
+          position: "bottom-right"
+        })
         return;
       }
       formData.append("username", form.username);
       formData.append("password", form.password);
       const response = await authLogin(formData);
-      console.log(response.acces)
-
       // Handle successful login
      
       localStorage.setItem("refreshToken", response.refresh_token);
       localStorage.setItem("userData", JSON.stringify(response.users));
-      login(response.access_token)
-    } catch (error) {
+      toast.success('Login succes! You will redirect to Dashboard')
+      setTimeout(() => {
+        login(response.access_token)
+
+      }, 5000)
+    } catch (error: any) {
       console.error(error);
-      alert("An unexpected error occurred");
+      if (error.response.status === 404) {
+        toast.error('Login failed, please check your credentials', {
+          position: "bottom-right"
+        })
+      } else if (error.response.status === 500) {
+        toast.error('Internal server error. Please try again later', {
+          position: "bottom-right"
+        })
+      }
+      
     } finally {
       setLoading(false);
     }
@@ -61,6 +70,7 @@ export default function Login() {
 
   return (
     <section className="tw-bg-gray-50 dark:tw-bg-gray-900">
+      <ToastContainer autoClose={2500} />
       <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-px-6 tw-py-8 tw-mx-auto md:tw-h-screen lg:tw-py-0">
         <a
           href="#"

@@ -1,4 +1,5 @@
 import { fetchCategory } from "@/api/fetchCategory";
+import { Link, Outlet } from "react-router-dom";
 import Layout from "@/components/layout/layout";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -103,12 +104,12 @@ const Category = () => {
               <div className="tw-flex tw-flex-row tw-align-center tw-justify-between">
                 <h1 className="tw-text-2xl">List Kategori </h1>
 
-                <a
-                  href="/category/add"
+                <Link
+                  to="add"
                   className="tw-bg-blue-500 tw-text-white tw-text-sm tw-font-semibold tw-py-1 tw-px-2 tw-font-medium tw-rounded hover:tw-bg-blue-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
                 >
                   Tambah Kategori
-                </a>
+                </Link>
               </div>
             </CardHeader>
             <CardContent>
@@ -185,6 +186,7 @@ const Category = () => {
             </CardContent>
           </Card>
         </div>
+        <Outlet />
       </div>
     </Layout>
   );
