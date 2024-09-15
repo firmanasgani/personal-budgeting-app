@@ -22,10 +22,18 @@ export const formatNumberToRupiah = (number: number | null) => {
 
 export const UtilToday = () => {
   const date = new Date();
-  const month = date.getMonth();
+  const month = date.getMonth()
   const monthNow = month < 10 ? `0${month}` : `${month}`;
   const today = `${date.getFullYear()}-${monthNow}-25`;
   return today;
+}
+
+export const DateToday = () => {
+  const date = new Date();
+  const month = date.getMonth() + 1
+  const monthNow = month < 10 ? `0${month}` : `${month}`;
+  const today = date.getDate()+1 < 10 ? `0${date.getDate()+1}`: date.getDate()
+  return `${date.getFullYear()}-${monthNow}-${today}`
 }
 
 export const UtilNextMonth = () => {

@@ -1,155 +1,165 @@
+import { fetchCategory } from "@/api/fetchCategory";
+import { createTransaction } from "@/api/fetchTransaction";
 import Layout from "@/components/layout/layout";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { ICategory } from "@/lib/interface";
-import { ApiUrl, formatNumberToRupiah } from "@/lib/utils";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { DateToday, formatNumberToRupiah } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'
 
 export default function FormTransaction() {
-  const date = new Date()
-  const month = date.getMonth()+1
-  const monthNow = month < 10 ? `0${month}` : `${month}`
-  const dateNow = date.getDate()
-  const day = dateNow < 10 ? `0${dateNow}` : `${dateNow}`
-  const today = `${date.getFullYear()}-${monthNow}-${day}`
-  const [category, setCategory] = useState<ICategory[]>([])
-
-  const [form, setForm] = useState({
-    category_id: '',
-    description: '',
+  const navigate = useNavigate();
+  const [category, setCategory] = useState<ICategory[]>([]);
+  const [formTransaction, setFormTransaction] = useState({
+    category: "",
     amount: 0,
-    dateTransaction: today
+    date: DateToday(),
+    description: "",
   });
+  
 
-  const [isLoading, setIsLoading] = useState(false)
-  const urlApi = ApiUrl()
+  const getAllCategory = async () => {
+    const data = await fetchCategory();
+    setCategory(data);
+  };
 
-  const token = localStorage.getItem('authToken')
+  const handleBack = () => {
+    navigate("/transaction");
+  };
 
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  }
-
-  const fetchCategory = async() => {
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
-      const { data } = await axios.get<{ categories: ICategory[]}>(`${urlApi}/category`, config)
+      if(formTransaction.description === '') {
+        toast.error("Description still blank", {
+          position: "bottom-right",
+        });
+        return;
+      }
+
+      if(formTransaction.amount === 0 || isNaN(formTransaction.amount)) {
+        toast.error("Amount still blank", {
+          position: "bottom-right",
+        });
+        return;
+      }
+
+      if(formTransaction.date > DateToday()) {
+        toast.error("Date cannot be greater than today", {
+          position: "bottom-right",
+        });
+        return;
+      }
       
-      setCategory(data.categories.filter((c) => c.type === 'expenses'))
+
+      const formData = new FormData()
+      formData.append('category_id', formTransaction.category)
+      formData.append('description', formTransaction.description)
+      formData.append('amount', formTransaction.amount.toString())
+      formData.append('date_transaction', formTransaction.date)
+      await createTransaction(formData)
+      toast.success('Success creaete new transaction!')
+      setTimeout(() => {
+        handleBack()
+      }, 3000)
     }catch(err: any) {
-      console.log(err)
+      toast.error(err.response.data.message, {
+        position: "bottom-right",
+      })
     }
   }
+
 
   useEffect(() => {
-    fetchCategory()
-  }, [])
-
-  const handleTransaction = async(e: React.FormEvent<HTMLFormElement>) => {
-    try {
-      setIsLoading(true)
-      e.preventDefault()
-      if(form.description == '') {
-        alert('Description  required')
-        return
-      }
-      if(form.amount == 0) {
-        alert('Amount  required')
-        return
-      }
-
-      if(form.category_id == '') {
-        alert('Category  required')
-        return
-      }
-      const formData = new FormData()
-      formData.append('category_id', form.category_id)
-      formData.append('description', form.description)
-      formData.append('amount', form.amount.toString())
-      formData.append('date_transaction', form.dateTransaction)
-
-      const responses = await axios.post(`${urlApi}/transaction`, formData, config)
-      if (responses.status === 200) {
-        alert('Transaction saved successfully')
-        setForm({
-          category_id: '',
-          description: '',
-          amount: 0,
-          dateTransaction: today
-        });
-      }
-
-    }catch(err: any) {
-      
-      console.log(err)
-  
-    }
-    finally{
-      setIsLoading(false)
-    }
-  };
+    getAllCategory();
+  }, []);
 
   return (
     <Layout>
       <div className="tw-flex tw-flex-col tw-m-10 tw-h-svh">
-        <h1 className="tw-mt-2 tw-font-bold">Tambah Transaksi baru</h1>
-        <form className="tw-mt-5" onSubmit={handleTransaction}>
-          
-          <div className="tw-flex tw-flex-col tw-mt-2">
-            <label htmlFor="category">Kategori</label>
-            <select
-              className="tw-border tw-rounded tw-p-2 tw-bg-white tw-text-sm focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-blue-500 focus:tw-border-blue-500"
-              value={form.category_id}
-              id="category"
-              onChange={(e) => setForm({...form, category_id: e.target.value})}
-            >
-            {category.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
-            </select>
-          </div>
-          <div className="tw-flex tw-flex-col tw-mt-2">
-            <label htmlFor="description">Deskripsi</label>
-            <textarea
-              name="name"
-              id="description"
-              value={form.description}
-              placeholder="Jelaskan tujuan transaksimu"
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              className="tw-border tw-rounded tw-p-2"
-            />
-          </div>
-          <div className="tw-flex tw-flex-col tw-mt-2">
-            <label htmlFor="amount">Amount</label>
-            <input
-              type="number"
-              name="amount"
-              value={form.amount}
-              onChange={(e) => setForm({ ...form, amount: parseInt(e.target.value) })}
-              className="tw-border tw-rounded tw-p-2"
-            />
-            {formatNumberToRupiah(form.amount)}
-          </div>
-          <div className="tw-flex tw-flex-col tw-mt-2">
-            <label htmlFor="startDate">Tanggal Transaksi</label>
-            <input
-              type="date"
-              name="startDate"
-              value={form.dateTransaction}
-              onChange={(e) => setForm({ ...form, dateTransaction: e.target.value })}
-              className="tw-border tw-rounded tw-p-2"
-            />
-          </div>
-        
-          <div className="tw-flex tw-flex-col tw-mt-6">
-            <button
-              disabled={isLoading}
-              className="tw-bg-blue-500 tw-text-white tw-font-semibold tw-py-2 tw-px-4 tw-rounded hover:tw-bg-blue-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
-            >
-              {isLoading ? 'Loading...' : 'Buat pengeluaran baru'}
-            </button>
-          </div>
-        </form>
+        <ToastContainer autoClose={2500} />
+        <Card>
+          <CardHeader>
+            <h2 className="tw-font-bold tw-mb-4">Buat transaksi baru</h2>
+          </CardHeader>
+          <CardContent>
+            <form className="tw-mt-5" onSubmit={handleSubmit}>
+              <div className="tw-flex tw-flex-col tw-mb-2">
+                <label
+                  className="tw-text-sm tw-font-bold tw-mb-1"
+                  htmlFor="category"
+                >
+                  Kategori
+                </label>
+                <select
+                  id="category"
+                  className="tw-border tw-rounded tw-mt-2 tw-p-2 tw-bg-white tw-text-sm focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-blue-500 focus:tw-border-blue-500"
+                  onChange={(e) => setFormTransaction({...formTransaction, category: e.target.value})}
+                  value={formTransaction.category}
+                >
+                  {category.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.code} | {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="tw-flex tw-flex-col tw-mb-2">
+                <label
+                  className="tw-text-sm tw-font-bold tw-mb-1"
+                  htmlFor="description">
+                    Transaksi</label>
+                    <textarea id="description"
+                    placeholder="Deskripsi transaksi"
+                    cols={20}
+                    value={formTransaction.description}
+                    onChange={(e) => setFormTransaction({...formTransaction, description: e.target.value})}
+                    rows={5}
+                    maxLength={100}
+                    wrap="hard"
+                    className="tw-w-[100%] tw-h-[150px] tw-border tw-rounded tw-mt-2  tw-p-2 tw-bg-white tw-text-sm focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-blue-500 focus:tw-border-blue-500"></textarea>
+                  
+              </div>
+              <div className="tw-flex tw-flex-col tw-mb-2">
+                <label
+                  className="tw-text-sm tw-font-bold tw-mb-1"
+                  htmlFor="date_transaction">Tanggal</label>
+                  <Input type="date" value={formTransaction.date} onChange={(e) => setFormTransaction({...formTransaction, date: e.target.value})} />
+              </div>
+              <div className="tw-flex tw-flex-col tw-mb-2">
+                <label
+                  className="tw-text-sm tw-font-bold tw-mb-1"
+                  htmlFor="amount">
+                    Jumlah</label>
+                  <Input 
+                    type="number" 
+                    min={0} 
+                    value={formTransaction.amount}
+                    onChange={(e) => setFormTransaction({...formTransaction, amount: parseInt(e.target.value)})}
+                    />
+                
+                  <p className="tw-text-red-500">{formatNumberToRupiah(isNaN(formTransaction.amount) ? 0 : formTransaction.amount)}</p>
+              </div>
+              <div className="tw-flex tw-flex-row tw-gap-2 tw-mb-2 tw-mt-10">
+                <button 
+                  className="tw-bg-blue-500 tw-text-white tw-text-sm tw-font-semibold tw-py-1 tw-px2 tw-font-medium tw-rounded tw-w-[100px] hover:tw-bg-blue-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
+                  type="submit"
+                  >
+                  Simpan
+                </button>
+                <button
+                  className="tw-bg-red-500 tw-text-white tw-text-sm tw-font-semibold tw-py-1 tw-px2 tw-font-medium tw-rounded tw-w-[100px] hover:tw-bg-red-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-red-500 focus:tw-ring-offset-2"
+                  onClick={handleBack}
+                >
+                  Kembali
+                </button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   );

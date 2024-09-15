@@ -15,7 +15,6 @@ export default function FormCategory() {
 
   const handleCategory = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.table(formCategory);
 
     try {
       if (formCategory.name === "") {
