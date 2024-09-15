@@ -1,8 +1,6 @@
 import { authRegister } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ApiUrl } from "@/lib/utils";
-import axios from "axios";
 import React, { useState } from "react";
 
 export default function Register() {
