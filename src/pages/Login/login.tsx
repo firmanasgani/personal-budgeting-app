@@ -52,7 +52,6 @@ export default function Login() {
 
       }, 5000)
     } catch (error: any) {
-      console.error(error);
       if (error.response.status === 404) {
         toast.error('Login failed, please check your credentials', {
           position: "bottom-right"

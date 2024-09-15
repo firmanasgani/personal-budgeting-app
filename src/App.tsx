@@ -51,6 +51,8 @@ export default function App() {
           </Routes>
         ) : <Navigate to="login" />}
       />
+
+  
       
       <Route
        path="budget/*"
@@ -70,7 +72,7 @@ export default function App() {
            <Route path="add" element={<FormTransaction />} />
            <Route path=":id" element={<DetailTransaction />} />
          </Routes>
-       ) : <Navigate to="login" />}
+       ) : <Navigate to="/login" />}
      />
   
     

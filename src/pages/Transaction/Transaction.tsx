@@ -1,199 +1,158 @@
+import { fetchCategory } from "@/api/fetchCategory";
+import { fetchTransactions } from "@/api/fetchTransaction";
 import Layout from "@/components/layout/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableCell,
-  TableFooter,
-} from "@/components/ui/table";
-import { fetchData } from "@/lib/apiClient";
+import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ICategory, ITranscations } from "@/lib/interface";
-import {
-  ApiUrl,
-  formatDate,
-  formatNumberToRupiah,
-  UtilMonthName,
-  UtilNextMonth,
-  UtilToday,
-} from "@/lib/utils";
+import { formatDate, formatNumberToRupiah, UtilNextMonth, UtilToday } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Transaction() {
-  const date = new Date();
-  const monthName = UtilMonthName;
-  const urlApi = ApiUrl();
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [startDate, setStartDate] = useState(UtilToday);
-  const [amount, setAmount] = useState(0)
-  const [endDate, setEndDate] = useState(UtilNextMonth);
-  const [transactions, setTransactions] = useState<ITranscations[]>([]);
   const [category, setCategory] = useState<ICategory[]>([]);
-  const [categoryId, setCategoryId] = useState("");
-  const navigate = useNavigate()
+  const [categoryid, setCategoryId] = useState("");
+  const [transaction, setTransaction] = useState<ITranscations[]>([]);
+  const [startDate, setStartDate] = useState(UtilToday);
+  const [endDate, setEndDate] = useState(UtilNextMonth);
+  const [isLoading, setIsLoading] = useState(true);
+  const [amount, setAmount] = useState(0)
 
-  const fetchTransactions = async () => {
+  const getCategory = async () => {
     try {
-      const endpoint = `${urlApi}/transactions`
-      const queryParams = {
-        category: categoryId,
-        start_date: startDate,
-        end_date: endDate
-      }
-      const data = await fetchData<{ transactions: ITranscations[] }>({
-        endpoint,
-        queryParams
-      })
-
-      const sumAmount = data.transactions.reduce((a, b) => a + b.amount, 0);
-      setAmount(sumAmount)
-      setTransactions(data.transactions);
+      const data = await fetchCategory();
+      setCategory(data);
     } catch (err: any) {
-      console.error(err.response.status)
+      console.error(err);
+    }
+  };
+
+  const getTransactions = async () => {
+    try {
+      setIsLoading(true);
+      const data = await fetchTransactions({
+        category: categoryid,
+        start_date: startDate,
+        end_date: endDate,
+      });
+      setTransaction(data);
+      const sumAmount = data.reduce((a, b) => a + b.amount, 0);
+      setAmount(sumAmount)
+    } catch (err: any) {
+      toast.error(`Error fetching transaction: ${err.message}`);
+      console.log(err.status);
+      if (err.status == 401) {
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const fetchCategory = async () => {
-    const endpoint =  `${urlApi}/category`
-    const queryParams = {
-      type: 'expenses'
-    }
-    try {
-      const data = await fetchData<{ categories: ICategory[]}>({
-        endpoint,
-        queryParams
-      })
-  
-      setCategory(data.categories);
-    }catch(err: any) {
-      console.log(err)
-    }
-  };
-
-  useEffect(() => {
-    setTimeout(() => {
-      fetchTransactions()
-    }, 500)
-  }, [categoryId, startDate, endDate]);
-
-  useEffect(() => {
-    fetchCategory();
-  }, []);
-
-  const handleChange = (event: any) => {
-    setCategoryId(event.target.value);
-  };
-
-  const handleTransactionDetail = (id: string) => {
-    navigate(`/transaction/${id}`)
+  const handleChange = (e: any) => {
+    setCategoryId(e.target.value)
   }
 
-  let nomor = 1;
+  useEffect(() => {
+    getCategory();
+    getTransactions();
+  }, [categoryid, startDate, endDate]);
+
   return (
     <Layout>
       <div className="tw-flex tw-flex-col tw-m-10">
-        <div className="tw-flex tw-flex-row tw-mt-4 tw-mb-4">
-          <select
-            className="tw-w-[20%] tw-mr-2 tw-appearance-none tw-bg-background tw-border tw-border-input tw-rounded-md tw-py-2 tw-px-3 tw-text-sm tw-font-medium tw-text-foreground focus:tw-outline-none focus:tw-ring-1 sm:tw-w-[50%] md:tw-w-[35%] focus:tw-ring-ring focus:tw-border-primary"
-            value={categoryId}
+        <ToastContainer autoClose={2500} />
+        <div className="tw-flex tw-flex-row tw-justify-between tw-mb-5">
+          <h1 className="tw-mt-2 tw-font-bold">List Transaksi</h1>
+        </div>
+        <div className="tw-flex tw-flex-row tw-justify-start tw-gap-2 tw-mb-5">
+          <select 
+            className="tw-w-[20%] tw-mr-2 tw-appearance-none tw-bg-background tw-border tw-border-input tw-rounded-md tw-py-2 tw-px-3 tw-text-sm tw-font-medium tw-text-foreground focus:tw-outline-none focus:tw-ring-1 sm:tw-w-[50%] md:tw-w-[35%] focus:tw-ring-1 focus:tw-border-primary"
             onChange={handleChange}
-          >
+            value={categoryid}
+            >
             <option value="">Semua</option>
-            {category.map((item) => (
-              <option value={item.id} key={item.id}>{item.name}</option>
+            {category.map((c) => (
+              <option value={c.id} key={c.id}>
+                {c.code} | {c.name}
+              </option>
             ))}
           </select>
-        
-          <Input
-            type="date"
-            className="tw-mr-2"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
-          <Input
-            type="date"
-            className="tw-mr-2"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-          ></Input>
+          <div className="tw-w-[20%] sm:tw-w-[50%] md:tw-w-[35%]">
+            <Input
+              className="tw-mr-2 tw-mx-w-sm"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              type="date"
+            />
+          </div>
+          <div className="tw-w-[20%] sm:tw-w-[50%] md:tw-w-[35%]">
+            <Input
+              className="tw-mr-2 tw-mx-w-sm"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              type="date"
+            />
+          </div>
         </div>
-        <div className="tw-flex tw-flex-col tw-mt-4">
+        <div className="tw-flex tw-flex-col tw-justify-between tw-mb-5">
           <Card>
             <CardHeader>
-              <div className="tw-flex tw-flex-row tw-gap-4 tw-justify-between">
-              <CardTitle>
-                Pengeluaran Bulan {monthName[date.getMonth()]}
-              </CardTitle>
-              <a
-                  href="/transaction/add"
-                  className="tw-bg-blue-500 tw-w-min-sm tw-text-white tw-text-sm tw-font-semibold tw-py-1 tw-px-2 tw-font-medium tw-rounded hover:tw-bg-blue-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
-                >
-                  Buat Transaksi
-                </a>
+              <div className="tw-flex tw-flex-row tw-align-center tw-justify-between">
+                <CardTitle>List Transaksi</CardTitle>
+                <Link 
+                to="add"
+                className="tw-bg-blue-500 tw-text-white tw-text-sm tw-font-semibold tw-py-1 tw-px-2 tw-font-medium tw-rounded hover:tw-bg-blue-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
+                >Buat Transaksi
+                </Link>
               </div>
-            
             </CardHeader>
             <CardContent>
               <Table>
-                <TableCaption>List of Transaction.</TableCaption>
+                <TableCaption>List of transactions.</TableCaption>
                 <TableHeader>
                   <TableRow className="tw-bg-red-100">
-                    <TableHead className="w-[50px]">No.</TableHead>
-                    <TableHead>Kategori</TableHead>
+                    <TableHead className="tw-w-[50px]">No. </TableHead>
                     <TableHead>Deskripsi</TableHead>
-                    <TableHead>Tanggal Transaksi</TableHead>
-                    <TableHead className="tw-text-right">
-                      Amount this month
-                    </TableHead>
+                    <TableHead>Kategori</TableHead>
+                    <TableHead>Tgl. Transaksi</TableHead>
+                    <TableHead className="tw-text-right">Amount</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {isLoading ? (
-                  <TableRow>
-                      <TableCell colSpan={5}>
-                      <p>Loading</p>
-                    </TableCell>
-                  </TableRow>
-                  ) : (transactions.length < 1 )? (
-                   <TableRow>
-                     <TableCell colSpan={5}>
-                      <p className="tw-text-center">Tidak ada data</p>
-                    </TableCell>
-                   </TableRow>
-                  ) : (
-                    transactions.map((t) => (
-                      <TableRow 
-                        key={t.id} 
-                        className="hover:tw-bg-gray-300 tw-cursor-pointer"
-                        title={`Klik untuk lihat detil transaksi ${t.description}`}
-                        onDoubleClick={() => handleTransactionDetail(t.id)}
-                        >
-                        <TableCell className="tw-font-medium">
-                          {nomor++}
-                        </TableCell>
-                        <TableCell>{t.categoryName}</TableCell>
-                        <TableCell>{t.description}</TableCell>
-                        <TableCell>{formatDate(t.date_transaction)}</TableCell>
-                        <TableCell className="tw-text-right">
-                          {formatNumberToRupiah(t.amount)}
+                  {
+                    isLoading ? (
+                      <TableRow>
+                        <TableCell colSpan={5} className="tw-text-center">
+                          Loading...
                         </TableCell>
                       </TableRow>
-                    ))
-                  )}
+                    ) :
+                      transaction.map((t, index) => (
+                        <TableRow key={t.id}>
+                          <TableCell>
+                            {index == 0 ? index + 1: index+1}
+                          </TableCell>
+                          <TableCell>
+                            {t.description}
+                          </TableCell>
+                          <TableCell>
+                            {t.categoryName}
+                          </TableCell>
+                          <TableCell>
+                            {formatDate(t.date_transaction)}
+                          </TableCell>
+                          <TableCell className="tw-text-right">{formatNumberToRupiah(t.amount)}</TableCell>
+                        </TableRow>
+                      ))}
                 </TableBody>
                 <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={4}>Total Expenses</TableCell>
-                    <TableCell className="tw-text-right">{formatNumberToRupiah(amount)}</TableCell>
+                  <TableRow className="tw-bg-gray-400">
+                    <TableCell colSpan={4}>Total Pengeluaran</TableCell>
+                    <TableCell className="tw-text-right">
+                      {isLoading ? 0 : formatNumberToRupiah(amount)}
+                    </TableCell>
                   </TableRow>
                 </TableFooter>
               </Table>
