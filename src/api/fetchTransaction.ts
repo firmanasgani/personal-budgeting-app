@@ -35,7 +35,7 @@ export const getTransactionById = async(id: string): Promise<ITranscations> => {
     const url = `${urlApi}/transaction/${id}`
     try {
         const data = await axios.get(url, config)
-        return data.data.transaction[0]
+        return data.data.transaction
     }catch(error) {
         if(error instanceof Error) {
             console.error(`Error fetching transaction: ${error.message}`)
@@ -57,11 +57,22 @@ export const updateTransaction = async(
     formData: FormData
 ): Promise<ITranscations[]> => {
     const url = `${urlApi}/transaction/${id}`
-    const data =await axios.put<ITranscations[]>(url, formData, config)
-    return data.data
+    try{
+        const data =await axios.put<ITranscations[]>(url, formData, config)
+        return data.data
+    }catch(error: any) {
+        if(error instanceof Error) {
+            console.error(`Error updating transaction: ${error.message}`)
+        }else {
+            console.error("Error updating transaction: unknown error")
+        }
+        throw error
+    }
+
 }
 
 export const deleteTransaction = async(id: string): Promise<void> => {
     const url = `${urlApi}/transaction/${id}`
-    await axios.delete(url, config)
+    const data = await axios.delete(url, config)
+    return data.data
 }

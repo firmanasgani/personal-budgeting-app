@@ -7,11 +7,12 @@ import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, Tabl
 import { ICategory, ITranscations } from "@/lib/interface";
 import { formatDate, formatNumberToRupiah, UtilNextMonth, UtilToday } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Transaction() {
+  const navigate = useNavigate()
   const [category, setCategory] = useState<ICategory[]>([]);
   const [categoryid, setCategoryId] = useState("");
   const [transaction, setTransaction] = useState<ITranscations[]>([]);
@@ -52,6 +53,10 @@ export default function Transaction() {
 
   const handleChange = (e: any) => {
     setCategoryId(e.target.value)
+  }
+
+  const toDetailTransaction = (id: string) => {
+    navigate(`/transaction/${id}`)
   }
 
   useEffect(() => {
@@ -130,7 +135,7 @@ export default function Transaction() {
                       </TableRow>
                     ) :
                       transaction.map((t, index) => (
-                        <TableRow key={t.id}>
+                        <TableRow key={t.id} onDoubleClick={() => toDetailTransaction(t.id)}>
                           <TableCell>
                             {index == 0 ? index + 1: index+1}
                           </TableCell>

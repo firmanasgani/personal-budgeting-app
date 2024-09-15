@@ -23,6 +23,12 @@ export default function FormTransaction() {
 
   const getAllCategory = async () => {
     const data = await fetchCategory();
+
+    setFormTransaction({
+      ...formTransaction,
+      category: data[0].id
+    })
+
     setCategory(data);
   };
 
@@ -61,7 +67,7 @@ export default function FormTransaction() {
       formData.append('amount', formTransaction.amount.toString())
       formData.append('date_transaction', formTransaction.date)
       await createTransaction(formData)
-      toast.success('Success creaete new transaction!')
+      toast.success('Success create new transaction!')
       setTimeout(() => {
         handleBack()
       }, 3000)
