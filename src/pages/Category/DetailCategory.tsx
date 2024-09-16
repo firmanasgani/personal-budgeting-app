@@ -3,8 +3,7 @@ import Layout from "@/components/layout/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css'
+import { Bounce, toast, ToastContainer } from "react-toastify"
 
 export default function DetailCategory() {
   const navigate = useNavigate();
@@ -50,7 +49,9 @@ export default function DetailCategory() {
 
       await updateCategory(id ?? "", formData)
       toast.success('Success update category', {
-        position: 'bottom-right'
+        position: 'bottom-right',
+        theme: 'colored',
+        transition: Bounce
       })
 
       setTimeout(() => {
@@ -58,7 +59,9 @@ export default function DetailCategory() {
       }, 2500)
     }catch(err: any) {
       toast.error('Error update category', {
-        position: 'bottom-right'
+        position: 'bottom-right',
+        theme: 'colored',
+        transition: Bounce
       })
     }
 
@@ -75,7 +78,9 @@ export default function DetailCategory() {
       
        await deleteCategory(id)
        toast.success('Success delete category', {
-        position: 'bottom-right'
+        position: 'bottom-right',
+        theme: 'colored',
+        transition: Bounce
        })
 
        setTimeout(() => {
@@ -84,7 +89,9 @@ export default function DetailCategory() {
         
     }catch(err: any) {
       toast.error('Internal server error!', {
-        position: 'bottom-right'
+        position: 'bottom-right',
+        theme: 'colored',
+        transition: Bounce
       })
 
     }

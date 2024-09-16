@@ -53,7 +53,8 @@ export const updateCategory = async (
 
 export const deleteCategory = async (id: string): Promise<void> => {
   const url = `${urlApi}/category/${id}`;
-  await axios.delete(url, config);
+  const data = await axios.delete(url, config);
+  return data.data
 };
 
 

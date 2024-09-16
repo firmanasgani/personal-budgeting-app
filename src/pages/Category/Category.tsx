@@ -143,7 +143,7 @@ const Category = () => {
                     categories.map((c) => (
                       <TableRow
                         key={c.id}
-                        className="hover:tw-bg-gray-300 tw-cursor-pointer"
+                        className="hover:tw-bg-gray-500 hover:tw-text-white hover:tw-cursor-pointer"
                         title={`Lihat detil ${c.name}`}
                         onDoubleClick={() => handleCategoryDetail(c.id)}
                       >

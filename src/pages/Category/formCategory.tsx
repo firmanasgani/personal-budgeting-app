@@ -3,8 +3,9 @@ import Layout from "@/components/layout/layout";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Bounce, toast, ToastContainer } from "react-toastify";
+
+
 export default function FormCategory() {
   const navigate = useNavigate();
   const [formCategory, setFormCategory] = useState({
@@ -20,6 +21,8 @@ export default function FormCategory() {
       if (formCategory.name === "") {
         toast.error("Name of category still blank", {
           position: "bottom-right",
+          theme: 'colored',
+          transition: Bounce
         });
         return;
       }
@@ -27,6 +30,8 @@ export default function FormCategory() {
       if (formCategory.code === "") {
         toast.error("Code of category still blank", {
           position: "bottom-right",
+          theme: 'colored',
+          transition: Bounce
         });
         return;
       }
@@ -38,13 +43,19 @@ export default function FormCategory() {
 
       await createCategory(formData);
 
-      toast.success("Success create new Category!");
+      toast.success("Success create new Category!", {
+        position: 'bottom-right',
+        theme: 'colored',
+        transition: Bounce
+      });
       setTimeout(() => {
         navigate("/category");
       });
     } catch (err: any) {
       toast.error(err.response.data.message, {
         position: "bottom-right",
+        theme: 'colored',
+          transition: Bounce
       });
     }
   };

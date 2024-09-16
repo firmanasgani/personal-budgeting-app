@@ -9,7 +9,6 @@ import { formatDate, formatNumberToRupiah, UtilNextMonth, UtilToday } from "@/li
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 export default function Transaction() {
   const navigate = useNavigate()
@@ -44,8 +43,7 @@ export default function Transaction() {
     } catch (err: any) {
       toast.error(`Error fetching transaction: ${err.message}`);
       console.log(err.status);
-      if (err.status == 401) {
-      }
+    
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +71,7 @@ export default function Transaction() {
         </div>
         <div className="tw-flex tw-flex-col tw-justify-start tw-gap-2 tw-mb-5">
           <select 
-            className="tw-w-[100%] tw-mr-2 tw-appearance-none tw-bg-background tw-border tw-border-input tw-rounded-md tw-py-2 tw-px-3 tw-text-sm tw-font-medium tw-text-foreground focus:tw-outline-none focus:tw-ring-1 sm:tw-w-[50%] md:tw-w-[35%] focus:tw-ring-1 focus:tw-border-primary"
+            className="tw-w-[100%] tw-mr-2 tw-appearance-none tw-bg-background tw-border tw-border-input tw-rounded-md tw-py-2 tw-px-3 tw-text-sm tw-font-medium tw-text-foreground focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-1 focus:tw-border-primary"
             onChange={handleChange}
             value={categoryid}
             >
@@ -135,7 +133,10 @@ export default function Transaction() {
                       </TableRow>
                     ) :
                       transaction.map((t, index) => (
-                        <TableRow key={t.id} onDoubleClick={() => toDetailTransaction(t.id)}>
+                        <TableRow 
+                          key={t.id} 
+                          className="hover:tw-bg-gray-500 hover:tw-text-white hover:tw-cursor-pointer"
+                          onDoubleClick={() => toDetailTransaction(t.id)}>
                           <TableCell>
                             {index == 0 ? index + 1: index+1}
                           </TableCell>

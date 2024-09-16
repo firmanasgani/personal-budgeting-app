@@ -13,7 +13,7 @@ import FormBudget from "./pages/Budget/formBudget";
 import FormTransaction from "./pages/Transaction/formTransaction";
 import DetailCategory from "./pages/Category/DetailCategory";
 import DetailTransaction from "./pages/Transaction/DetailTransaction";
-
+import 'react-toastify/dist/ReactToastify.css'
 export default function App() {
 
   const isAuthenticated = () => {
@@ -49,7 +49,7 @@ export default function App() {
             <Route path=":id" element={<DetailCategory />} />
           
           </Routes>
-        ) : <Navigate to="login" />}
+        ) : <Navigate to="/login" />}
       />
 
   
@@ -62,7 +62,7 @@ export default function App() {
            <Route path="add" element={<FormBudget />} />
            <Route path=":id" element={<DetailBudget />} />
          </Routes>
-       ) : <Navigate to="login" />}
+       ) : <Navigate to="/login" />}
      />
        <Route
        path="transaction/*"

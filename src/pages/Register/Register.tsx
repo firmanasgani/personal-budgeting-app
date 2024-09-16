@@ -2,8 +2,11 @@ import { authRegister } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function Register() {
+    const navigate = useNavigate()
     const [form, setForm] = useState({
         username: '',
         fullname: '',
@@ -14,7 +17,10 @@ export default function Register() {
     const handleSubmit = async(e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if(form.password !== form.confirmPassword) {
-            alert('Password dan konfirmasi password tidak sama')
+            toast.error('Password and confirm password not matches', {
+              position: 'bottom-right',
+              theme: 'colored'
+            })
             return
         }
 
@@ -25,14 +31,19 @@ export default function Register() {
         const response =await authRegister(formData)
 
         if(response.status === 201) {
-          alert('Register Success')
-          window.location.href = '/login'
+          toast.success('Success create a new user!', {
+            position: 'bottom-right',
+            theme: 'colored'
+          })
+
+          navigate('/login')
         }
     }
 
 
   return (
     <section className="tw-bg-gray-50 dark:tw-bg-gray-900">
+      <ToastContainer autoClose={2500} />
       <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-px-6 tw-py-8 tw-mx-auto md:tw-h-screen lg:tw-py-0">
         <a
           href="#"

@@ -5,7 +5,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/authContext";
 import { authLogin } from "@/api/auth";
 import { Bounce, ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+
 export default function Login() {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
