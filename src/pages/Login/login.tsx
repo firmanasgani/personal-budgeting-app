@@ -4,7 +4,7 @@ import { Input } from "../../components/ui/input";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/authContext";
 import { authLogin } from "@/api/auth";
-import { ToastContainer, toast } from "react-toastify";
+import { Bounce, ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 export default function Login() {
   const [loading, setLoading] = useState(false);
@@ -46,19 +46,33 @@ export default function Login() {
      
       localStorage.setItem("refreshToken", response.refresh_token);
       localStorage.setItem("userData", JSON.stringify(response.users));
-      toast.success('Login succes! You will redirect to Dashboard')
+      toast.success('Login succes! You will redirect to Dashboard', {
+        position: "bottom-right",
+        theme: 'colored',
+        transition: Bounce
+      })
       setTimeout(() => {
         login(response.access_token)
 
       }, 5000)
     } catch (error: any) {
-      if (error.response.status === 404) {
+      if (error.response.status === 404 || error.response.status === 400) {
         toast.error('Login failed, please check your credentials', {
-          position: "bottom-right"
+          position: "bottom-right",
+          theme: "colored",
+          transition: Bounce
         })
       } else if (error.response.status === 500) {
         toast.error('Internal server error. Please try again later', {
-          position: "bottom-right"
+          position: "bottom-right",
+          transition: Bounce,
+          theme: "colored"
+        })
+      }else {
+        toast.error('Server error, please try again later', {
+          position: 'bottom-right',
+          transition: Bounce,
+          theme: 'colored'
         })
       }
       

@@ -72,9 +72,9 @@ const Category = () => {
   return (
     <Layout>
       <div className="tw-flex tw-flex-col tw-m-10">
-        <div className="tw-flex tw-flex-row tw-mt-4 tw-mb-4 tw-justify-between">
+        <div className="sm:tw-flex-col md:tw-flex-col tw-flex-col tw-gap-4 tw-flex tw-justify-between tw-mt-4 md:tw-mb-4">
           <select
-            className="tw-w-[20%] tw-mr-2 tw-appearance-none tw-bg-background tw-border tw-border-input tw-rounded-md tw-py-2 tw-px-3 tw-text-sm tw-font-medium tw-text-foreground focus:tw-outline-none focus:tw-ring-1 sm:tw-w-[50%] md:tw-w-[35%] focus:tw-ring-ring focus:tw-border-primary"
+            className="tw-w-[100%] tw-mr-2 tw-appearance-none tw-bg-background tw-border tw-border-input tw-rounded-md tw-py-2 tw-px-3 tw-text-sm tw-font-medium tw-text-foreground focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-ring focus:tw-border-primary"
             value={type}
             onChange={handleChange}
           >
@@ -86,13 +86,13 @@ const Category = () => {
           </select>
           <Input
             type="date"
-            className="tw-mr-2 tw-max-w-sm"
+            className="tw-mr-2 tw-appearance-none tw-text-foreground tw-border-input tw-bg-background tw-text-sm tw-w-[100%]"
             value={today}
             onChange={(e) => setToday(e.target.value)}
           />
           <Input
             type="date"
-            className="tw-mr-2 tw-max-w-sm"
+            className="tw-mr-2 tw-appearance-none tw-text-foreground tw-border-input tw-bg-background tw-text-sm tw-w-[100%]"
             value={nextMonth}
             onChange={(e) => setNextMonth(e.target.value)}
           />
