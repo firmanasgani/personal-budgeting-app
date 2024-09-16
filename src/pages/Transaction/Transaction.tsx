@@ -71,9 +71,9 @@ export default function Transaction() {
         <div className="tw-flex tw-flex-row tw-justify-between tw-mb-5">
           <h1 className="tw-mt-2 tw-font-bold">List Transaksi</h1>
         </div>
-        <div className="tw-flex tw-flex-row tw-justify-start tw-gap-2 tw-mb-5">
+        <div className="tw-flex tw-flex-col tw-justify-start tw-gap-2 tw-mb-5">
           <select 
-            className="tw-w-[20%] tw-mr-2 tw-appearance-none tw-bg-background tw-border tw-border-input tw-rounded-md tw-py-2 tw-px-3 tw-text-sm tw-font-medium tw-text-foreground focus:tw-outline-none focus:tw-ring-1 sm:tw-w-[50%] md:tw-w-[35%] focus:tw-ring-1 focus:tw-border-primary"
+            className="tw-w-[100%] tw-mr-2 tw-appearance-none tw-bg-background tw-border tw-border-input tw-rounded-md tw-py-2 tw-px-3 tw-text-sm tw-font-medium tw-text-foreground focus:tw-outline-none focus:tw-ring-1 sm:tw-w-[50%] md:tw-w-[35%] focus:tw-ring-1 focus:tw-border-primary"
             onChange={handleChange}
             value={categoryid}
             >
@@ -84,17 +84,17 @@ export default function Transaction() {
               </option>
             ))}
           </select>
-          <div className="tw-w-[20%] sm:tw-w-[50%] md:tw-w-[35%]">
+          <div className="tw-w-[100%]">
             <Input
-              className="tw-mr-2 tw-mx-w-sm"
+              className="tw-mr-2"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               type="date"
             />
           </div>
-          <div className="tw-w-[20%] sm:tw-w-[50%] md:tw-w-[35%]">
+          <div className="tw-w-[100%]">
             <Input
-              className="tw-mr-2 tw-mx-w-sm"
+              className="tw-mr-2"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               type="date"
