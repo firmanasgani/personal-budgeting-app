@@ -1,13 +1,13 @@
-import { getBudgetById } from "@/api/fetchBudget";
+import { deleteBudget, getBudgetById, updateBudget } from "@/api/fetchBudget";
 import { fetchCategory } from "@/api/fetchCategory";
 import Layout from "@/components/layout/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {  ICategory } from "@/lib/interface";
+import { ICategory } from "@/lib/interface";
 import { DateFormatInput, formatNumberToRupiah } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 
 export default function DetailBudget() {
   const { id } = useParams();
@@ -50,16 +50,80 @@ export default function DetailBudget() {
   const handleUpdateBudget = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      if (budget.description === "") {
+        toast.error("Description still blank!", {
+          position: "bottom-right",
+          theme: "colored",
+          transition: Bounce,
+        });
+        return;
+      }
+
+      if (budget.amount <= 0 || isNaN(budget.amount)) {
+        toast.error("Amount still blank or less than zero", {
+          position: "bottom-right",
+          theme: "colored",
+          transition: Bounce,
+        });
+        return;
+      }
+
+      if (
+        DateFormatInput(budget.start_date) > DateFormatInput(budget.end_date)
+      ) {
+        toast.error("Tanggal mulai tidak boleh lebih dari tanggal selesai", {
+          position: "bottom-right",
+          theme: "colored",
+          transition: Bounce,
+        });
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("category_id", budget.categoryid);
+      formData.append("description", budget.description);
+      formData.append("start_date", budget.start_date);
+      formData.append("end_date", budget.end_date);
+      formData.append("amount", budget.amount.toString());
+      await updateBudget(id??"", formData)
+      toast.success('Success update budget', {
+        position: 'bottom-right',
+        theme: 'colored',
+        transition: Bounce
+      })
+
+      setTimeout(() => {
+        handleBack()
+      }, 2500)
     } catch (err: any) {
       console.error(err);
+      toast.error('Internal server error', {
+        position: 'bottom-right',
+        theme: 'colored',
+        transition: Bounce
+      })
     }
   };
 
   const handleDeleteBudget = async () => {
     try {
-      alert('Hello world')
+      await deleteBudget(id??"") 
+      toast.success('Success deleting budget', {
+        position: 'bottom-right',
+        theme: 'colored',
+        transition: Bounce
+      })
+
+      setTimeout(() => {
+        handleBack()
+      }, 2500)
     } catch (err: any) {
       console.error(err);
+      toast.error('Internal server error while deleting budget', {
+        position: 'bottom-right',
+        theme: 'colored',
+        transition: Bounce
+      })
     }
   };
 
@@ -200,8 +264,10 @@ export default function DetailBudget() {
                   Simpan
                 </button>
                 <button
-                  className={!isEdit ? 
-                    "tw-bg-yellow-500 tw-text-white tw-text-sm tw-font-semibold tw-py-1 tw-px2 tw-font-medium tw-rounded tw-w-[100px] hover:tw-bg-yellow-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2" :"tw-bg-gray-500 tw-text-white tw-text-sm tw-font-semibold tw-py-1 tw-px2 tw-font-medium tw-rounded tw-w-[100px] hover:tw-bg-gray-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-gray-500 focus:tw-ring-offset-2"
+                  className={
+                    !isEdit
+                      ? "tw-bg-yellow-500 tw-text-white tw-text-sm tw-font-semibold tw-py-1 tw-px2 tw-font-medium tw-rounded tw-w-[100px] hover:tw-bg-yellow-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2"
+                      : "tw-bg-gray-500 tw-text-white tw-text-sm tw-font-semibold tw-py-1 tw-px2 tw-font-medium tw-rounded tw-w-[100px] hover:tw-bg-gray-600 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-gray-500 focus:tw-ring-offset-2"
                   }
                   disabled={isEdit}
                   onClick={handleDeleteBudget}
