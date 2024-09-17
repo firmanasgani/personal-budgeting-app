@@ -135,7 +135,7 @@ export default function Transaction() {
                       transaction.map((t, index) => (
                         <TableRow 
                           key={t.id} 
-                          className="hover:tw-bg-gray-500 hover:tw-text-white hover:tw-cursor-pointer"
+                          className="hover:tw-bg-black hover:tw-text-white hover:tw-cursor-pointer"
                           onDoubleClick={() => toDetailTransaction(t.id)}>
                           <TableCell>
                             {index == 0 ? index + 1: index+1}

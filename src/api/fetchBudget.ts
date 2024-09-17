@@ -32,7 +32,7 @@ export const fetchBudget = async(params?: {
     }
 }
 
-export const getBudgetBuyId = async(id: string): Promise<IBudget> => {
+export const getBudgetById = async(id: string): Promise<IBudget> => {
     const url = `${urlApi}/budget/${id}`
     const data = await axios.get(url, config)
     return data.data.budget

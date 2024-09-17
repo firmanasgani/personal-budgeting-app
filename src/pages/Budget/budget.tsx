@@ -113,7 +113,7 @@ export default function Budget() {
                       <TableRow 
                         key={b.id} 
                         onDoubleClick={() => {handleDetailBudget(b.id ?? "")}}
-                        className="hover:tw-bg-gray-500 hover:tw-text-white hover:tw-cursor-pointer"
+                        className="hover:tw-bg-black hover:tw-text-white hover:tw-cursor-pointer"
                         >
                         <TableCell className="tw-w-[50px]">
                           {index==0? index+1 : index+1}

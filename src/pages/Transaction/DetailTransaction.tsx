@@ -39,7 +39,7 @@ export default function DetailTransaction() {
       setTransaction({
         category: data.categoryid,
         amount: data.amount,
-        date: data.date_transaction,
+        date: DateFormatInput(data.date_transaction),
         description: data.description,
       });
     } catch (err: any) {

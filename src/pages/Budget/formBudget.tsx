@@ -155,7 +155,7 @@ export default function FormBudget() {
                   className="tw-text-sm tw-font-bold tw-mb-1"
                   htmlFor="description"
                 >
-                  Deskripsi:
+                  Jumlah:
                 </label>
 
                 <Input 
