@@ -3,7 +3,7 @@ import { fetchCategory } from "@/api/fetchCategory";
 import Layout from "@/components/layout/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { IBudget, ICategory } from "@/lib/interface";
+import {  ICategory } from "@/lib/interface";
 import { DateFormatInput, formatNumberToRupiah } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
